@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE tiles-definitions PUBLIC
+  "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+  "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+ 
+<tiles-definitions>
+
+	<!-- 앱 표시 다있음 -->
+	<definition name="tilesLayout" template="/WEB-INF/jsp/layouts/template.jsp">
+		<put-attribute name="top" value="/WEB-INF/jsp/layouts/header.jsp" />
+		<put-attribute name="nav" value="/WEB-INF/jsp/layouts/nav.jsp" />
+		<put-attribute name="footer" value="/WEB-INF/jsp/layouts/footer.jsp" />
+		<put-attribute name="content" value="" />
+		<!-- <put-attribute name="bottom" value="/WEB-INF/jsp/layouts/footer.jsp" /> -->
+	</definition>
+	
+	
+	<definition name="*.1" extends="tilesLayout">
+		<put-attribute name="nav" value="" />
+		<put-attribute name="footer" value="" />
+		<put-attribute name="content" value="/WEB-INF/views/banThing/base1/{1}.jsp" />
+	</definition>
+	<definition name="*.2" extends="tilesLayout">
+		<put-attribute name="content" value="/WEB-INF/views/banThing/base2/{1}.jsp" />
+	</definition>
+	
+	
+		
+	<!-- 타일즈 미 적용 -->
+<!-- 	<definition name="normalLayout" template="/WEB-INF/jsp/layout/NormalLayout.jsp">
+		<put-attribute name="NormalLayout" value="" />
+	</definition>
+	
+	<definition name="*.jsp" extends="normalForm">
+		<put-attribute name="NormalLayout" value="/WEB-INF/views/{1}.jsp" />
+	</definition>
+		
+	<definition name="*/*.jsp" extends="normalForm">
+		<put-attribute name="NormalLayout" value="/WEB-INF/views/{1}/{2}.jsp" />
+	</definition> -->
+   <!-- 메뉴 표시 -->
+ <!--    <definition name="base" template="/WEB-INF/tiles/template.jsp">
+        <put-attribute name="left"   value="/WEB-INF/tiles/left.jsp" />
+        <put-attribute name="header" value="/WEB-INF/tiles/header.jsp" />
+        <put-attribute name="footer" value="/WEB-INF/tiles/footer.jsp" />
+    </definition>
+ 
+    <definition name="*.page" extends="base">
+        <put-attribute name="body" value="/WEB-INF/views/{1}.jsp" />
+    </definition>
+ 
+     <definition name="*/*.page" extends="base">
+         <put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />
+     </definition>
+    
+    <definition name="*/*/*.page" extends="base">
+        <put-attribute name="body" value="/WEB-INF/views/{1}/{2}/{3}.jsp" />
+    </definition>
+    
+    
+    메뉴 미표시
+    <definition name="baseEmpty" template="/WEB-INF/tiles/templateEmpty.jsp">
+    </definition>
+    
+    <definition name="*.part" extends="baseEmpty">
+        <put-attribute name="body" value="/WEB-INF/views/{1}.jsp" />
+    </definition>
+ 
+     <definition name="*/*.part" extends="baseEmpty">
+         <put-attribute name="body" value="/WEB-INF/views/{1}/{2}.jsp" />
+     </definition>
+    
+    <definition name="*/*/*.part" extends="baseEmpty">
+        <put-attribute name="body" value="/WEB-INF/views/{1}/{2}/{3}.jsp" />
+    </definition>   --> 
+
+	<!-- 레이아웃 미적용  -->
+ <!--  <definition name=".login" template="/WEB-INF/views/layout/default-layout.jsp">
+        <put-attribute name="title" value="" />
+        <put-attribute name="header" value="/WEB-INF/views/sample/header.jsp" />
+        <put-attribute name="menu" value="" />        
+        <put-attribute name="footer" value="" />
+    </definition>
+ 
+    (2) 레이아웃을 적용하는화면
+    <definition name=".root" template="/WEB-INF/views/layout/baseLayout.jsp">
+        <put-attribute name="title" value="" />
+        <put-attribute name="header" value="/WEB-INF/views/sample/header.jsp" />
+        <put-attribute name="menu" value="/WEB-INF/views/sample/menu.jsp" />        
+        <put-attribute name="footer" value="/WEB-INF/views/sample/footer.jsp" />
+    </definition>
+    
+    (1)    
+    <definition name="/banThing/*" extends=".login">
+      <put-attribute name="body" value="/WEB-INF/banThing/login/{1}.jsp" />
+    </definition>
+ 
+    (2)
+   <definition name="/*/*" extends=".root">      
+      <put-attribute name="body" value="/WEB-INF/banThing/{1}/{2}.jsp" />
+    </definition> -->
+
+
+</tiles-definitions>

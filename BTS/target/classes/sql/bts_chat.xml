@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="chat">
+		<insert id="createChat" parameterType="chatVO">
+			insert into Bts_Chat values(Bts_Chat_seq.nextVal,#{id},#{title},#{options},#{tag},#{product},
+			#{price},#{pay},#{gender},#{personnel},#{place},#{img},#{content},sysdate,#{placeInfo})
+		</insert>
+      <select id="getChatInfo" resultType="chatVO">
+          select * from Bts_Chat
+       </select>
+      	
+	</mapper>
