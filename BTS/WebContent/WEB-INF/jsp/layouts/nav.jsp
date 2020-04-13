@@ -65,6 +65,7 @@
         			<li><h2><a href="#">채팅 목록</a></h2></li> -->
         			<li><h2><a href="alram.2">알림 정보</a></h2></li>
         			<li><h2><a href="member.2">회원 정보</a></h2></li>
+        			<li><h2><a href="minechat.2">내 채팅방</a></h2></li>
         		</ul>
         	</div>
         </div>
