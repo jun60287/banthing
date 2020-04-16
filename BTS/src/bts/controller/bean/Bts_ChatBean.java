@@ -1,6 +1,10 @@
 package bts.controller.bean;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,10 +12,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.eclipse.jdt.internal.compiler.ast.JavadocSingleNameReference;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -22,69 +29,71 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import bts.model.dao.Bts_ChatDAO;
-import bts.model.vo.Bts_ChatVO;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import bts.basic.function.ChatMethod;
+import bts.model.dao.Bts_ChatDAO;
+import bts.model.dao.Bts_DealDAO;
+import bts.model.vo.Bts_ChatVO;
+import bts.model.vo.Bts_DealVO;
+
+//채팅기능 관련 컨트롤러
 @Controller
 @RequestMapping("/banThing/")
 public class Bts_ChatBean {
 	
 	@Autowired
 	private Bts_ChatDAO chatDAO;
+	@Autowired
+	private Bts_DealDAO dealDAO;
 	
 	public HttpServletRequest request=null;
 	public HttpServletResponse response=null;
 	public Model model = null;
-
+	public HttpSession session=null;
+	String uri=null;
+	String nick=null;
+	String id=null;
+	String path=null;
+	ChatMethod cm=new ChatMethod();
 	
 	@ModelAttribute
-	public void reqres(HttpServletRequest request,HttpServletResponse response, Model model) {
+	public void reqres(HttpServletRequest request,HttpServletResponse response, Model model,HttpSession session) {
 		this.request=request;
 		this.response=response;
 		this.model = model;
+		this.session=session;
+		uri=request.getRequestURI();
+		nick=(String)session.getAttribute("sessionNick");
+		id=(String)session.getAttribute("sessionId");
+		path=request.getRealPath("/WEB-INF/chatRoom/");
 	}
 	
-	@RequestMapping(value = "chatinfo", headers="Accept=*/*",  produces="application/json")
-	@ResponseBody
-	public Map ChatInfo(){
-		List chatList =new ArrayList();
-		chatList=chatDAO.getChatInfo();
-		/*
-		 * request.removeAttribute("chatList"); request.setAttribute("chatList",
-		 * chatList);
-		 */
-		 Map map=new HashMap(); 
-		 map.put("chatList", chatList);
-		 
-		return map;
+	//채팅방  접속할 곳
+	@RequestMapping("chat.2")
+	public String chat(int num) throws Exception{
+		//users컬럼에 세션에 저장된 닉과 테이블번호 보내서 ex)최병찬,꼴로 저장
+		int check=chatDAO.setUsers(nick+",",num);
+		//특정 튜플 가져오기.
+		Bts_ChatVO vo=chatDAO.getUniqueChatInfo(num);
+		//페이지에 chatVo보내기
+		model.addAttribute("vo", vo);
+		//check==1 값변경 성공
+		if(check == 1) {
+			//ChatMethod에있는 saveJson 실행하여 보내주기.
+			cm.saveJson(path,num, id, nick, nick+"님께서 입장하셨습니다.");
+			return uri.split("/")[3];
+		}else {
+			return uri.split("/")[3];
+		}
 	}
-//	    response.setHeader("Content-Type", "application/xml"); 
-//        response.setContentType("text/html;charset=UTF-8"); 
-//        response.setCharacterEncoding("utf-8");
-
-//		JSONObject all=new JSONObject();
-//		JSONArray jsonarr=new JSONArray();
-//		JSONArray aa=new JSONArray();
-//		for(int i=0;i<chatList.size();i++) {
-//			JSONObject placeInfo=new JSONObject();
-//			String xyInfo=chatList.get(i).getPlaceInfo();
-//			String x=xyInfo.split("-")[0];
-//			String y=xyInfo.split("-")[1];
-//			
-//			placeInfo.put("x", y);
-//			placeInfo.put("y", x);
-//			jsonarr.add(placeInfo);
-//		}
-//			all.put("position",jsonarr);
-//			
-//	        response.getWriter().print(all.toString());
-   
+	
+	//방 개설
 	@RequestMapping("submit")
-	public void createChat (Bts_ChatVO vo, MultipartHttpServletRequest multireq) throws Exception {
-		
+	public void createChat (Bts_ChatVO vo, MultipartHttpServletRequest multireq,HttpSession session) throws Exception {
+		int num = 0;
 		if (request.getMethod().equals("POST")) {
-			System.out.println("ㅎ2ㅎ2");
-			
 			MultipartFile mf = null;
 			String newName = null;
 			try {
@@ -95,29 +104,156 @@ public class Bts_ChatBean {
 				String ext = orgName.substring(orgName.lastIndexOf('.'));			//3. 확장자 추출
 				long date = System.currentTimeMillis();								//4. 날짜 받아오기
 				newName = date + imgName + ext;										//5. 최종 파일이름
-				
+				String nick=(String)session.getAttribute("sessionNick");
 				// # DB에 form 저장
+				vo.setUsers(nick+",");
 				vo.setImg(newName);
+				vo.setNick(nick);
+				vo.setTag(vo.getTag().replaceAll(" ", ""));
+				//방개설
 				chatDAO.createChat(vo);
+				//방 번호흭득
+				num=chatDAO.getMaxNum();
 				
+				Bts_DealVO dealvo=new Bts_DealVO();
+				dealvo.setDealState("거래 전");
+				dealvo.setId(vo.getId());
+				dealvo.setNum(num);
+				dealvo.setPlace(vo.getPlace());
+				dealvo.setPrice(vo.getPrice());
+				dealvo.setProduct(vo.getProduct());
+				dealvo.setUsers(vo.getNick()+",");
+				//거래 개설
+				dealDAO.createDeal(dealvo);
+				
+		        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path+num+".json"));
 				// # 서버에 이미지 저장 : WEB-INF  >  chatImg
-				String path = multireq.getRealPath("chatImg");
-				String imgPath = path+ "\\" + newName;
+				String path1 = multireq.getRealPath("/resources/chatImg");
+				String imgPath = path1+ "\\" + newName;
 				File copyFile = new File(imgPath);
 				mf.transferTo(copyFile);
 				
 				model.addAttribute("createChat","success");
 				
-				System.out.println(multireq.getRealPath("chatImg"));
-				
-				
 			}catch(Exception e) {
 				e.printStackTrace();
 			}finally {
-				response.sendRedirect("index.2");
+				response.sendRedirect("chat.2?num="+num);
 			}
 		}
 	}
 	
+	//bts_chat 테이블을 json타입으로 변경
+	@RequestMapping(value = "chatinfo", headers="Accept=*/*",  produces="application/json")
+	@ResponseBody
+	public Map ChatInfo(String[] search){
+		// search[0~2] >>지도관련 변수들
+		// search[3] >>카테고리 , search[4] >>키워드 변수 		
+		List chatList=new ArrayList();
+		chatList=chatDAO.getChatInfo(search[3],search[4]);
+		
+		Map map=new HashMap(); 
+		map.put("chatList", chatList);
+		map.put("lat", search[0]); 
+		map.put("lng", search[1]);
+		map.put("level", search[2]);
+		map.put("options", search[3]);
+		map.put("keyword", search[4]);
+		 
+		return map;
+	}
 	
+	//bts_deal 테이블을 json타입으로 변경
+	@RequestMapping(value = "dealinfo", headers="Accept=*/*",  produces="application/json")
+	@ResponseBody
+	public Map DealInfo(int num){
+		
+		Bts_DealVO vo= dealDAO.getUniqueDeal(num);
+		Map map=new HashMap(); 
+		map.put("vo", vo);
+		
+		return map;
+	}
+	
+	//방 나가는 메서드
+	@RequestMapping("chatExit")
+	public void chatExit(String nick,String id,int num) throws Exception{
+	    
+		int check=chatDAO.chatExit(nick,num);
+		//check==1 나가짐
+		if(check==1) {
+			  cm.saveJson(path,num, id, nick,nick+"님께서 퇴장하셨습니다.");
+		}
+		response.sendRedirect("index.2");
+	}
+	//방 폭파~ 붐!!!
+	@RequestMapping("chatBoom")
+	public void chatExit(int num) throws IOException{
+		chatDAO.chatBoom(num);
+		response.sendRedirect("index.2");
+	}
+	
+
+	//채팅 저장
+	@RequestMapping("chatSave")
+	public void chatSave(int num,String mes,String nick) throws Exception{
+		//바꾸지마샘 채팅은 닉으로 보낼거임 ㅋㅋ
+		cm.saveJson(path,num, nick, nick,mes);
+	}
+	
+	//채팅 빼오기
+   @ResponseBody
+   @RequestMapping("logInfo")
+   public void logInfo(int num,String id,String nick,String entrance) throws Exception{
+	  response.setHeader("Content-Type", "application/xml"); 
+      response.setContentType("text/html;charset=UTF-8"); 
+      response.setCharacterEncoding("utf-8");
+      JSONObject jo=null;
+      JSONParser parser = new JSONParser();
+      JSONArray log=new JSONArray();
+  	  JSONObject chat=new JSONObject();
+      String path=request.getRealPath("/WEB-INF/chatRoom/");
+      try {
+    	  jo = (JSONObject)parser.parse(new FileReader(path+num+".json"));
+      }catch(Exception e) {
+      	  log=new JSONArray();
+      	  chat=new JSONObject();
+      	  jo=new JSONObject();
+      	  jo.put("num", num);
+      	  chat.put("id", nick);
+      	  chat.put("mes", nick+"님께서 입장하셨습니다.");
+      	  log.add(chat);
+          jo.put("log", log);
+          FileWriter save = new FileWriter(path+num+".json"); 
+          //스트링 타입으로 저장
+          save.write(jo.toJSONString()); 
+          save.flush();
+          save.close(); 
+      }
+        
+      response.getWriter().print(jo.toString());
+   }
+   
+   @RequestMapping("mychat.2")
+   public String mychat(String num) {
+	   if(num != null) {
+		   if(num.equals("1")) {
+			   List chatList=new ArrayList();
+			   chatList = chatDAO.mychat(nick);
+			   model.addAttribute("num",num);
+			   model.addAttribute("chatList",chatList);
+			   System.out.println("asdf");
+		   }else if(num.equals("2")){
+			   List chatList=new ArrayList();
+			   chatList = chatDAO.inchat(nick,id);
+			   model.addAttribute("num",num);
+			   model.addAttribute("chatList",chatList);
+			   System.out.println(chatList);
+			   System.out.println("asdf1");
+		   }
+	   }else {
+		   num = "0";
+	   }
+	   return uri.split("/")[3];
+   }
 }

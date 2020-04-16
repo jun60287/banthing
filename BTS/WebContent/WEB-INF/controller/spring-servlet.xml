@@ -12,14 +12,8 @@
 	http://www.springframework.org/schema/mvc/spring-mvc.xsd"
 	>
 	<mvc:annotation-driven/>
-	<!-- 위에 작성해야함. 최우선 순위여야함 다운로드는 별도의 창을 만듬 페이지이동없음
-		BeanNameViewResolver 는 새로운 창을 구성할때 우선순위를 주기 위해 사용
-		지정하지 않으면 이동 먼저 처리하려함. property view에 대한 우선순위를 지정하는 옵션
-		다운로드는 페이지 이동전에 다운로드 창이 뜨게 하기 위해 반드시 우선순위0으로 해야함
-		view를 담당하는 ViewResolver에는 0보다 우선순위가 낮은 1을 지정
-	 -->
-	
 	<!-- Tiles 뷰 리졸버 -->
+	<mvc:resources mapping="/resources/**" location="/resources/"/>
 	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
         <property name="definitions">
             <list>
@@ -43,8 +37,7 @@
 		<property name="maxUploadSize" value="-1"/><!--  1메가바이트 업로드크기제한없음-->
 		<property name="defaultEncoding" value="utf-8"/>
 	</bean>
-	<!-- DB mybatis setting -->
-	<!-- destory-method 해당 db가종료되어있을때 어떻게 할거냐 ->close라는 메서드를 사용하겟다. -->
+	
 	<bean 
 		id="dataSource" 
 		class="org.apache.commons.dbcp.BasicDataSource"
@@ -54,18 +47,12 @@
 		p:username="git02" 
 		p:password="git02"
 	/>
-	<!-- 커넥션 풀  
-		db연결 정보:datasource 매퍼위치와 type-alias에 대한 정보 :mybatis-config.xml에 설정
-		커넥션 connection =session
-	-->
+	
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource"/>
 		<property name="configLocation" value="/WEB-INF/mybatis/mybatis-config.xml"/>
 	</bean>
-	<!-- sql문 날릴때 필요한 것 
-		@autowired해서 아래 빈을 가져다 사용하게 됨
-		detory-method="clearCahe":종료시 무엇을 할지 지정하는 속성 ->마이바티스 장점
-		-->
+	
 	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" destroy-method="clearCache">
 		<constructor-arg name="sqlSessionFactory" ref="sqlSessionFactory"/>
 	</bean>	

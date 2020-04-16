@@ -19,6 +19,32 @@ public class Bts_ChatVO {
 	private String content ;
 	private Timestamp reg ;
 	private String placeInfo;
+	private String users;
+	private String nick;
+	
+	
+	
+	
+	public String getNick() {
+		return nick;
+	}
+
+
+	public void setNick(String nick) {
+		this.nick = nick;
+	}
+
+
+	public String getUsers() {
+		return users;
+	}
+
+
+	public void setUsers(String users) {
+		this.users = users;
+	}
+
+
 	public int getNum() {
 		return num;
 	}

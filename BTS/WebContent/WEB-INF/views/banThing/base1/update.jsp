@@ -1,63 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<link rel="stylesheet" href="<c:url value="/resources/css/base1/update.css"/>">
 
-<style>
-	 	.name{
-			text-align:center;
-		}
-		.name>.bts{
-			font-size:3em;
-		}
-		.signup-setting{
-			text-align:center;
-		}
-		.signup-setting input{
-			font-size:16px;
-			margin-bottom:5px;
-			padding: 8px;
-			width:50%;
-		}
-
-		.signup-setting button{
-			font-size:22px;
-			margin-bottom:5px;
-			width:55%;
-		}
-@media (min-width: 768px) {
-    #index{
-    	margin-left:-35%;
-    }
-}
-	@media (max-width: 768px) {
-
-	}
-</style>
-<c:if test="${update eq 'success'}">
-	<script>
-		alert('회원수정이 완료되었습니다.');
-		window.location.href="index.2";
-	</script>
-</c:if>
 <div id="index">
 	<div class="name">
 		<h1 class="bts">반띵</h1>
 		<h1 class="bts">(로고)</h1>
 	</div>
 	<div class="signup-setting">
-	<!-- //onsubmit="return check()" -->
 	
 		<form name="signUpForm" action="update.1"  method="post">
-				<input type="text" id="id" name="id" class="btn" value="${all.getId()}" readonly><br/>
+				<input type="text" id="id" name="id" class="btn" value="${all.id}" readonly><br/>
 				<input type="password" id="pw" name="pw" class="btn" placeholder="*패스워드"><br/>
 				<input type="password" name="pw2" class="btn" placeholder="*패스워드 확인"><br/>
-				<input type="text" id="name" name="name" class="btn" value="${all.getName()}" readonly><br/>
-				<input type="text" id="ssan" name="ssan" class="btn" value="${all.getSsan()}" readonly><br/>
-				<input type="text" id="ph" name="ph" class="btn" placeholder="*전화번호 (010-1234-1234)"><br/>
+				<input type="text" id="name" name="name" class="btn" value="${all.name}" readonly><br/>
+				<input type="text" id="ssan" name="ssan" class="btn" value="${all.ssan}" readonly><br/>
+				<input type="text" id="ph" name="ph" class="btn" value="${all.ph}" placeholder="*전화번호 (010-1234-1234)"><br/>
 				<input type="button" id="addrBtn" class="btn btn-warning" style="width:15%" value="검색" onclick="address_setting()">
-				<input type="text" id="addr" name="addr" class="btn " style="width:35%" placeholder="주소" value="${all.getAddr()}"readonly="readonly"><br/>
-				<input type="text" id="email" name="email" class="btn" placeholder="이메일"><br/>
-				<input type="text" id="nick" name="nick" class="btn" placeholder="*닉네임"><br/>
+				<input type="text" id="addr" name="addr" class="btn " style="width:35%" placeholder="주소" value="${all.addr}" readonly="readonly"><br/>
+				<input type="text" id="email" name="email" class="btn" value="${all.email}" placeholder="이메일"><br/>
+				<input type="text" id="nick" name="nick" class="btn" value="${all.nick}" placeholder="*닉네임"><br/>
 			<br/>
 			<button onclick="window.location.href='update.1'" class="btn btn-info">
 				회원가입
@@ -65,6 +28,14 @@
 		</form>
 	</div>
 </div>
+
+<c:if test="${update eq 'success'}">
+	<script>
+		alert('회원수정이 완료되었습니다.');
+		window.location.href="index.2";
+	</script>
+</c:if>
+
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <!-- 유효성 검사 & 정규식 표현 -->
 <script>

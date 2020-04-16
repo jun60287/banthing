@@ -1,37 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<style>
- 	.name{
-		text-align:center;
-		padding-top:15%;
-	}
-	.name>.bts{
-		font-size:5em;
-	}
-	.catergory{
-		 padding-top:15%;
-		 text-align:center;
-
-	}
-	.catergory button{
-		 font-size:2em;
-		 width:30%;
-		 margin:20px;
-	}
-	
-@media (min-width: 768px) {
-    #index{
-    	margin-left:-35%;
-    } 
-}
-@media (max-width: 768px) {
-}
-</style>  
-    
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>  
+<link rel="stylesheet" href="<c:url value="/resources/css/base1/index.css"/>">  
 <div id="index">
 	<div class="name">
 		<h1 class="bts">반띵</h1>
-		<h1>(로고)</h1>
+		<img width="300" height="300" src="<c:url value="/resources/img/logo.jpg"/>">
 	</div>
 	<div class="catergory">
 		<button onclick="window.location.href='login.1'"

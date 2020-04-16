@@ -2,24 +2,44 @@ package bts.model.dao;
 
 import java.util.List;
 
+import org.mybatis.spring.SqlSessionTemplate;
+
 import bts.model.vo.Bts_MemberVO;
 
-public interface Bts_MemberDAO {
+//sql.xml 호출하는 곳
+public class Bts_MemberDAO{
 	
-	//회원 가입
-	public void signupMember(Bts_MemberVO vo) throws Exception;
-	//아이디 비번 확인
-	public int loginCheck(Bts_MemberVO vo) throws Exception;
-	//전체 회원 데이터 조회
-	public List selectAll() throws Exception;
-	//회원 한명 데이터 조회
-	public Bts_MemberVO selectMember(String id) throws Exception;
-	//회원 데이터 수정
-	public void updateMember(Bts_MemberVO vo) throws Exception;
-	//회원 데이터 삭제
-	public void deleteMember(String id) throws Exception;
-	//아이디 사용가능여부 조회
-	public int idAvailCheck(String id) throws Exception;
+	private SqlSessionTemplate sqlSession = null;
 
+	public void setSqlSession(SqlSessionTemplate sqlSession) {
+		this.sqlSession = sqlSession;
+	}
 	
+	public void signupMember(Bts_MemberVO vo) throws Exception {
+		sqlSession.insert("member.signupMember", vo);
+	}
+	public String getNick(String id) throws Exception {
+		return sqlSession.selectOne("member.nickCheck", id);
+		
+	}
+
+	public int loginCheck(Bts_MemberVO vo) throws Exception {
+		return sqlSession.selectOne("member.loginCheck", vo);
+	}
+	
+	public int apiIdCheck(String id) throws Exception {
+		return sqlSession.selectOne("member.apiIdCheck", id);
+	}
+
+	public Bts_MemberVO selectMember(String id) throws Exception {
+		return sqlSession.selectOne("member.selectMember",id);
+	}
+
+	public void updateMember(Bts_MemberVO vo) throws Exception {
+		sqlSession.update("member.updateMember",vo);
+	}
+
+	public void deleteMember(String id) throws Exception {
+		sqlSession.delete("member.deleteMember",id);
+	}
 }

@@ -1,0 +1,210 @@
+/*  웹용768px 이상 */ 
+@media (min-width:768px){
+
+	.web{
+		font-size:45px;
+		width:100%;
+		height:100%;
+		z-index:1;
+	}
+
+	/* 1. 맵  */
+	#web_Map{
+		 width:100%;
+		 height:100%;
+	}
+	/* 2.맵 아이콘 */
+	
+	.web_Icon{
+		position:absolute;
+		top:10px;
+		z-index:10;
+		font-size:30px;
+		color:blue;
+	}
+	
+	.web_Icon a{
+		color:#FF8000;
+	}
+	.web_Icon a:hover{
+		color:white;
+	}
+	
+	
+	/* 3. 방 개설 */
+	.web_Room {
+	    display: none; 
+	    background-color:#58ACFA;
+	    height:80%;
+	    
+	    width:70%;
+	    position:absolute;
+	    z-index:10;
+		top:10%;
+		right:10%;
+		font-size:30px;
+		text-align:center;
+	}
+	.web_Room h1{
+		 color:black;
+		 font-size:25px;
+	}
+	.web_RoomSet input[type="text"]{
+		margin-top:10px;
+		width:75%;
+		text-align:left;	
+	}
+	.web_RoomSet select{
+		margin-top:10px;
+		width:75%;
+	}
+	
+	/* 서로 중복*/
+	.web_Exit {
+	    position: absolute;
+	    left: 15%;
+	    bottom: 10px;
+	    transform: translate(-50%,0);
+	    text-align: center;
+	    font-size: 15px;
+	}   
+	.web_RoomOpen {
+	    position: absolute;
+	    right: 5%;
+	    bottom: 10px;
+	    transform: translate(-50%,0);
+	    text-align: center;
+	    font-size: 15px;
+	}   
+
+
+	/* 4. 맵 필터 설정  */
+	.web_MapFilter {
+	    display: none; 
+	    background-color:#58ACFA;
+	    height:80%;
+	    width:70%;
+	    position:absolute;
+	    z-index:10;
+		top:10%;
+		right:10%;
+		font-size:30px;
+		text-align:center;
+	}	
+	
+	.web_MFName{
+		height:20%
+	}
+	.web_MFName h1{
+		font-size:30px;
+		margin-bottom:30px;
+	}
+	
+	.web_MFSetting{
+		height:60%;
+	}
+	.web_MFSetting p{
+		font-size:22px;
+	}
+	.web_MFSetting button{
+		width:60%;
+		font-size:23px;
+		margin:20px;
+	}
+	.web_MFSetting select{
+		width:60%;
+		font-size:23px;
+		margin:20px;
+	}
+	
+	.web_MFBtn{
+		height:20%;
+	}
+	
+	.web_MFBtn button{
+		font-size:25px;
+	}
+	
+	/* 5.내 채팅방  */
+	.web_MyRoom {
+	    display: none; 
+	    background-color:#58ACFA;
+	    height:80%;
+	    width:70%;
+	    position:absolute;
+	    z-index:10;
+		top:10%;
+		right:10%;
+		font-size:30px;
+		text-align:center;
+	}
+	
+	.web_MyRoom p {
+	    margin-top: 80px;
+	}
+	.web_MyRoom h1 {
+		font-size: 32px;
+	}
+	
+	/* 6. 전체 채팅방  */
+	.web_AllRoom {
+	    display: none; 
+	    overflow:scroll;
+	    background-color:#58ACFA;
+	    height:80%;
+	    width:70%;
+	    position:absolute;
+	    z-index:5;
+		top:10%;
+		right:10%;
+		font-size:30px;
+		text-align:center;
+	}
+	
+	.web_AllRoom p {
+	    margin-top: 80px;
+	}
+	.web_AllRoom h1 {
+		font-size: 32px;
+	}
+	.web_AllRoom {
+	    display: none; 
+	    overflow: auto;
+	    background-color:#58ACFA;
+	    height:80%;
+	    width:70%;
+	    position:absolute;
+	    z-index:5;
+		top:10%;
+		right:10%;
+		font-size:20px;
+		text-align:center;
+	}
+     #roomContent {
+     	margin: 0 auto;
+         width:15em;
+         height:10em;
+         text-align:center;
+         word-break:break-all;
+     }
+
+     #roomContent > div {
+         border: 1px solid #C9C8C6;
+         height:8em;
+         word-break:break-all;
+         overflow: auto;
+     }
+	/* 기본적인 전체 셋팅 */
+	.container .jumbotron, .container-fluid{
+	    padding-left: 5px;
+	    padding-top:0px;
+	    padding-right:0px;
+	    padding-bottom:0px;
+	}
+
+	#popup1{
+		display:none;
+	}
+	
+}
+

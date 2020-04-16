@@ -31,19 +31,18 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import bts.model.dao.Bts_MemberDAOImpl;
+import bts.basic.function.Logins;
+import bts.model.dao.Bts_MemberDAO;
 import bts.model.vo.Bts_MemberVO;
-
-import ban.controller.bean.Logins;
 
 
 @Controller
 @RequestMapping("/banThing/")
 public class Bts_MemberBean {
-	Logins login = null;
+	Logins login = new Logins();
 	
 	@Autowired
-	private Bts_MemberDAOImpl memberDAO;
+	private Bts_MemberDAO memberDAO;
 	
 	public HttpServletRequest request=null;
 	public HttpServletResponse response=null;
@@ -57,6 +56,7 @@ public class Bts_MemberBean {
 		this.model = model;
 		this.session = session;
 	}
+	
 	@RequestMapping("signup.1")
 	public String signupForm(Bts_MemberVO vo) throws Exception {
 		if(request.getMethod().equals("GET")){
@@ -85,7 +85,7 @@ public class Bts_MemberBean {
 	
 	
 	@RequestMapping("apiLogin.1")
-	public String kakaologin(String id, String nickname, String name, String email, HttpSession session) throws Exception {
+	public String kakaologin(String id, String nickname, String name, String email) throws Exception {
 		//1. 아이디 꺼내서 디비에서 확인
 		String api = null;
 		if(name == "" || email == "") { api = "k-"; id = api+id; }
@@ -95,10 +95,11 @@ public class Bts_MemberBean {
 		
 		//2. 있으면 로그인
 		if(check == 1) {
+			String nick=memberDAO.getNick(id);
 			session.setAttribute("sessionId", id);
+			session.setAttribute("sessionNick", nick);
 			model.addAttribute("check", check);
 			System.out.println("'"+id+"'"+"님이 로그인하셨습니다.");
-			
 			return "map-setting.1";
 		}else {
 		//3. 없으면 회원가입
@@ -112,7 +113,7 @@ public class Bts_MemberBean {
 	}
 	
 	@RequestMapping("login.1")
-	public String loginForm (Bts_MemberVO vo, HttpSession session) throws Exception {
+	public String loginForm (Bts_MemberVO vo) throws Exception {
 		
 		if(request.getMethod().equals("GET")) {
 			return "login.1";
@@ -120,7 +121,9 @@ public class Bts_MemberBean {
 			int check = memberDAO.loginCheck(vo);
 			
 			if (check == 1) {
+				String nick=memberDAO.getNick(vo.getId());
 				session.setAttribute("sessionId", vo.getId());
+				session.setAttribute("sessionNick", nick);
 				model.addAttribute("check", check);
 				System.out.println("'"+vo.getId()+"'"+"님이 로그인하셨습니다.");
 				return "map-setting.1";
@@ -132,17 +135,31 @@ public class Bts_MemberBean {
 		return "login.1";
 	}
 	
-	@RequestMapping("logout")
-	public String logout () throws Exception {
-		
-		String id = (String)session.getAttribute("sessionId");
-		if(id != null) {
-			session.invalidate();
-			model.addAttribute("logout","success");
+	@RequestMapping("update.1")
+	public String update (Bts_MemberVO vo) throws Exception {
+		if(request.getMethod().equals("GET")) {
+			String id = (String)session.getAttribute("sessionId");
+			Bts_MemberVO vo1 = memberDAO.selectMember(id);
+			model.addAttribute("all",vo1);
+			return "update.1";
+		}else if(request.getMethod().equals("POST")){
+			memberDAO.updateMember(vo); 
+			model.addAttribute("update","success");
+			return "map-setting.1";
 		}
 		
+		return "update.1";
+	}
+
+	@RequestMapping("logout")
+	public String logout() throws Exception {
+		String token=(String)session.getAttribute("kakaotoken");
+		if(token!=null) {
+			login.kakaoLogout(token);
+		}
+		session.invalidate();
+		model.addAttribute("logout","success");
 		return "login.1";
 	}
-	
 
 }

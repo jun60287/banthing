@@ -7,11 +7,27 @@
 			insert into Bts_Member values(#{id},#{pw},#{name},#{gender},#{ssan},#{ph},
 			#{addr},#{email},#{nick},sysdate)
 		</insert>
+		
 		<select id="loginCheck" parameterType="memberVO" resultType="int">
 			select count(*) from Bts_Member where id = #{id} and pw = #{pw}
 		</select>
+		
 		<select id="apiIdCheck" parameterType="String" resultType="int">
 			select count(*) from Bts_Member where id = #{value}
 		</select>
 		
+		<update id="updateMember" parameterType="memberVO">
+			update Bts_Member set pw=#{pw},ph=#{ph},addr=#{addr},email=#{email},nick=#{nick} where id=#{id}
+		</update> 
+		
+		<select id="selectMember" parameterType="String" resultType="memberVO">
+			select * from Bts_Member where id = #{value}
+		</select> 
+		
+		<delete id="deleteMember" parameterType="String">
+			delete from Bts_Member where id = #{value}
+		</delete> 
+		<select id="nickCheck" parameterType="String" resultType="String">
+	         select nick from Bts_Member where id = #{value}
+	    </select>
 	</mapper>

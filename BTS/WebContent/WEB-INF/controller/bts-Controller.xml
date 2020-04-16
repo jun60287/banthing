@@ -16,11 +16,14 @@
 	<context:component-scan base-package="bts.controller.bean" />
 	<!-- DB 연결 태그 -->
 	<!-- MemberDAOImpl 객체생성 후 이미 spring-sevlet.xml 에서 세팅한(db) sqlSession 호출 -->
-	<bean id="memberDAO" class="bts.model.dao.Bts_MemberDAOImpl">
+	<bean id="memberDAO" class="bts.model.dao.Bts_MemberDAO">
+		<property name="sqlSession" ref="sqlSession"/>
+	</bean>	 
+	<bean id="DealDAO" class="bts.model.dao.Bts_DealDAO">
 		<property name="sqlSession" ref="sqlSession"/>
 	</bean>	 
 	 <bean id="chatDAO" class="bts.model.dao.Bts_ChatDAO">
       <property name="sqlSession" ref="sqlSession"/>
-   </bean>    
+    </bean>    
 
 </beans>

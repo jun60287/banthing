@@ -2,191 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<style>
-/*  웹용768px 이상 */ 
-@media (min-width:768px){
-
-	.web{
-		font-size:45px;
-		width:100%;
-		height:100%;
-		z-index:1;
-	}
-
-	/* 1. 맵  */
-	#web_Map{
-		 width:100%;
-		 height:100%;
-	}
-	/* 2.맵 아이콘 */
-	
-	.web_Icon{
-		position:absolute;
-		top:10px;
-		z-index:10;
-		font-size:30px;
-		color:blue;
-	}
-	
-	.web_Icon a{
-		color:#FF8000;
-	}
-	.web_Icon a:hover{
-		color:white;
-	}
-	
-	
-	/* 3. 방 개설 */
-	.web_Room {
-	    display: none; 
-	    background-color:#58ACFA;
-	    height:80%;
-	    width:70%;
-	    position:absolute;
-	    z-index:10;
-		top:10%;
-		right:10%;
-		font-size:30px;
-		text-align:center;
-	}
-	.web_Room h1{
-		 color:black;
-		 font-size:25px;
-	}
-	.web_RoomSet input[type="text"]{
-		margin-top:10px;
-		width:75%;
-		text-align:left;	
-	}
-	.web_RoomSet select{
-		margin-top:10px;
-		width:75%;
-	}
-	
-	/* 서로 중복*/
-	.web_Exit {
-	    position: absolute;
-	    left: 15%;
-	    bottom: 10px;
-	    transform: translate(-50%,0);
-	    text-align: center;
-	    font-size: 15px;
-	}   
-	.web_RoomOpen {
-	    position: absolute;
-	    right: 5%;
-	    bottom: 10px;
-	    transform: translate(-50%,0);
-	    text-align: center;
-	    font-size: 15px;
-	}   
-
-
-	/* 4. 맵 필터 설정  */
-	.web_MapFilter {
-	    display: none; 
-	    background-color:#58ACFA;
-	    height:80%;
-	    width:70%;
-	    position:absolute;
-	    z-index:10;
-		top:10%;
-		right:10%;
-		font-size:30px;
-		text-align:center;
-	}	
-	
-	.web_MFName{
-		height:20%
-	}
-	.web_MFName h1{
-		font-size:30px;
-		margin-bottom:30px;
-	}
-	
-	.web_MFSetting{
-		height:60%;
-	}
-	.web_MFSetting p{
-		font-size:22px;
-	}
-	.web_MFSetting button{
-		width:60%;
-		font-size:23px;
-		margin:20px;
-	}
-	.web_MFSetting select{
-		width:60%;
-		font-size:23px;
-		margin:20px;
-	}
-	
-	.web_MFBtn{
-		height:20%;
-	}
-	
-	.web_MFBtn button{
-		font-size:25px;
-	}
-	
-	/* 5.내 채팅방  */
-	.web_MyRoom {
-	    display: none; 
-	    background-color:#58ACFA;
-	    height:80%;
-	    width:70%;
-	    position:absolute;
-	    z-index:10;
-		top:10%;
-		right:10%;
-		font-size:30px;
-		text-align:center;
-	}
-	
-	.web_MyRoom p {
-	    margin-top: 80px;
-	}
-	.web_MyRoom h1 {
-		font-size: 32px;
-	}
-	
-	/* 6. 전체 채팅방  */
-	.web_AllRoom {
-	    display: none; 
-	    overflow:scroll;
-	    background-color:#58ACFA;
-	    height:80%;
-	    width:70%;
-	    position:absolute;
-	    z-index:5;
-		top:10%;
-		right:10%;
-		font-size:30px;
-		text-align:center;
-	}
-	
-	.web_AllRoom p {
-	    margin-top: 80px;
-	}
-	.web_AllRoom h1 {
-		font-size: 32px;
-	}
-	
-	/* 기본적인 전체 셋팅 */
-	.container .jumbotron, .container-fluid{
-	    padding-left: 5px;
-	    padding-top:0px;
-	    padding-right:0px;
-	    padding-bottom:0px;
-	}
-
-	#popup1{
-		display:none;
-	}
-	
-}
-</style>
-
+<link rel="stylesheet" href="<c:url value="/resources/css/base2/index.css"/>">
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a44d7ff9bef3120be5c58e8aa20ddfe0&libraries=clusterer,services"></script>
 <script  src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script> 
 
@@ -215,6 +31,9 @@
 		<div class="web_Icon" style="right:0px;top:50%">
 			<a href="#" id="web_AllRoomBtn"><i class="fas fa-arrow-left fa-2x"></i></a>
 		</div>
+		<div class="web_Icon" id="web_AllRoomClose" style="left:8%;top:50%;display:none">
+			<a href="#" id="web_AllRoomBtn2"><i class="fas fa-arrow-right fa-2x"></i></a>
+		</div>
 		
 		<!--웹 3. 방 개설  -->
 		<div class="web_Room">
@@ -228,9 +47,20 @@
 	           		<input type="text" class="btn" name="title" placeholder="방제목"><br/>
 					<select class="btn" name="options">
 						<option value="">카테고리 설정</option>
-						<option value="치킨">치킨</option>
-						<option value="햄버거">햄버거</option>
-						<option value="피자">피자</option>
+						<option value="의류잡화">의류/잡화</option>
+						<option value="뷰티">뷰티</option>
+						<option value="식품">식품</option>
+						<option value="유아">유아</option>
+						<option value="생활용품">생활용품</option>
+						<option value="가전">가전</option>
+						<option value="스포츠">스포츠/레저</option>
+						<option value="자동차용품">자동차 용품</option>
+						<option value="도서음반">도서/음반/DVD</option>
+						<option value="취미">취미</option>
+						<option value="오피스">문구/오피스</option>
+						<option value="반려동물">반려동물용품</option>
+						<option value="헬스">헬스/건강식품</option>
+						<option value="여행">여행/티켓</option>
 					</select><br/>
 					<input type="text" class="btn" name="tag" placeholder="#해쉬태그, #이렇게, #작성하세요,"><br/>
 					<input type="text" class="btn" name="product" placeholder="상품이름" style="width:140px;">
@@ -264,16 +94,14 @@
 			        <button type="button" class="btn web_Exit" id="web_RoomExitBtn">닫기</button>
 			        <button class="btn web_RoomOpen" id="web_RoomOpenBtn" onclick="submit" >개설</button>
 	           </form>
-
 			<!-- 방 버튼 -->
-	        
 	   </div>
 	   
 		<!-- 4. 맵 필터 설정  -->
 		<div class="web_MapFilter">
-		
-       		<div class="web_MFName">
-				<h1>맵 필터 <br/>설정</h1>
+		      		<div class="web_MFName">
+       			<br/>
+				<h1>맵 필터 설정</h1>
 			</div>
 			
 			<div class="web_MFSetting" style="height:60%">
@@ -284,23 +112,36 @@
 					<option value="4">울산</option>
 					<option value="5">인천</option>
 				</select>
-				<select class="btn">
-					<option>카테고리 설정</option>
-					<option>안알랴줌2</option>
-					<option>안알랴줌3</option>
-				</select>
+				<select id="options" class="btn">
+					<option value="">카테고리 설정</option>
+					<option value="전체">전체</option>
+					<option value="의류잡화">의류/잡화</option>
+					<option value="뷰티">뷰티</option>
+					<option value="식품">식품</option>
+					<option value="유아">유아</option>
+					<option value="생활용품">생활용품</option>
+					<option value="가전">가전</option>
+					<option value="스포츠">스포츠/레저</option>
+					<option value="자동차용품">자동차 용품</option>
+					<option value="도서음반">도서/음반/DVD</option>
+					<option value="취미">취미</option>
+					<option value="오피스">문구/오피스</option>
+					<option value="반려동물">반려동물용품</option>
+					<option value="헬스">헬스/건강식품</option>
+					<option value="여행">여행/티켓</option>
+				</select><br/>
+				<input type="text" id="tag" class="btn" placeholder="검색어" />
 			</div>
-			
 			<div class="btn web_MFBtn" style="height:20%">
-				<button class="btn exit3" id="web_MapFilterExitBtn">닫기</button>
 				<button onclick="tossvl()" class="btn">
 					적용
 				</button>
 				<button onclick="window.location.href='index.2'" class="btn">
 					전체
-				</button>
+				</button><br/><br/>
+				<button class="btn exit3" id="web_MapFilterExitBtn">닫기</button>
 			</div>
-			
+			</div>
 	   </div> 
 	   
 	<!-- 5.내 채팅 목록  -->
@@ -335,6 +176,8 @@
 			<h1 style="color:black">방 정보</h1>
 			<table class="table" id="web_ARDTable">
 		    </table>
+		    <div id='roomContent'>
+		    </div>
 		</div>
 		<!-- 방 목록 보기 -->
 		<div class="web_AllRoomView">
@@ -377,14 +220,19 @@
 
 	 var map = new kakao.maps.Map(document.getElementById('web_Map'), { // 지도를 표시할 div
 		    center : new kakao.maps.LatLng("${lat}", "${lng}"), // 지도의 중심좌표 
-		    level :${level}
+		    level :"${level}"
 	 });
 	 
-	function tossvl(){
-		var val = $("#address1 option:selected").val();
-		console.log(val);
-		window.location.href="index.2?val="+val;
-	}
+		function tossvl(){
+			var addr = $("#address1 option:selected").val();
+			var options = '';
+			if ($("#options option:selected").val() == '') {
+				alert('카테고리를 선택하세요');
+				return false;
+			}else options = $("#options option:selected").val();
+			var tag = $('#tag').val();
+			window.location.href="index.2?addr="+addr+"&options="+options+"&tag="+tag;
+		}
  
 	//새로고침시 마킹
 	$("#web_refresh").click(function(){
@@ -421,52 +269,71 @@
 	}
 	//맵 마킹
 	function marking(){
-	 	$.ajax({
-			url:"chatinfo",
-	        type: 'get',
-	        dataType:'json',
-	        contentType:"application/json;charset=UTF-8",
-			success:function(data){
-				chatInfo=data['chatList'];
-			    var bounds = map.getBounds();
-			    var sw = bounds.getSouthWest();  //남서쪽
-			    var ne = bounds.getNorthEast(); //북동쪽 
-			    var lb=new kakao.maps.LatLngBounds(sw, ne);
-			    let result="";
-		    	var count=0;
-				$(data['chatList']).map(function(index, i) {
-					var x=i.placeInfo.split('-')[0];
-					var y=i.placeInfo.split('-')[1];
-				    var markerposition=new kakao.maps.LatLng(y,x);
-				    if(lb.contain(markerposition)){
-			    		var marker=addMarker(markerposition,count);
-				    	count++;
-				    	/*방 정보 */
-			    		result +="<tr>";
-			    		result +="<td>"+count+"</td>";
-			    		result +="<td>"+i.title+"</td>";
-			    		result +="<td>"+"1/"+i.personnel+"</td>";
-			    		result +="<td>"+"<button onclick='roomDetail("+i.num+")' class='btn'>상세보기</button>"+"</td>";
-			    		result +="<td>"+"<button class='btn'>입장</button>"+"</td>";
-			    		result +="</tr>";
+       $.ajax({
+         url:"chatinfo",
+           type: 'get',
+           dataType:'json',
+           traditional : true,
+           data: {'search' : ['${lat}','${lng}','${level}','${options}','${tag}']},
+           contentType:"application/json;charset=UTF-8",
+         success:function(data){
+            chatInfo=data['chatList'];
+             var bounds = map.getBounds();
+             var sw = bounds.getSouthWest();  //남서쪽
+             var ne = bounds.getNorthEast(); //북동쪽 
+             var lb=new kakao.maps.LatLngBounds(sw, ne);
+             let result="";
+             var count=0;
+            $(data['chatList']).map(function(index, i) {
+               var x=i.placeInfo.split('-')[0];
+               var y=i.placeInfo.split('-')[1];
+                var markerposition=new kakao.maps.LatLng(y,x);
+                if(lb.contain(markerposition)){
+                   var marker=addMarker(markerposition,count);
+                   var nowUsers=i.users.split(',').length-1;
+                   count++;
+                   /*방 정보 */
+                   result +="<tr>";
+                   result +="<td>"+count+"</td>";
+                   result +="<td>"+i.title+"</td>";
+                   result +="<td>"+nowUsers+"/"+i.personnel+"</td>";
+                   result +="<td>"+"<button onclick='roomDetail("+i.num+")' class='btn'>상세보기</button>"+"</td>";
+                   if(nowUsers==i.personnel){
+                      if(i.users.split(',').includes("${sessionNick}")){
+                         result +="<td>"+"<button class='btn' onclick='chatGo("+i.num+")'>입장</button>"+"</td>";
+                      }else{
+                         result +="<td>"+"<button class='btn' onclick='fullChat()'>입장</button>"+"</td>";
+                      }
+                   }else{
+                      result +="<td>"+"<button class='btn' onclick='chatGo("+i.num+")'>입장</button>"+"</td>";
+                   }
+                   result +="</tr>";
 
-				    }				    
-					$("#web_ARTbody").html(result);
-				});
-	 		}
-		});
+                }                
+               $("#web_ARTbody").html(result);
+            });
+          }
+      });
+   }
+
+	
+	function fullChat(){
+		alert("유감스럽게도 꽉찼어요 ㅠ-ㅠ,,");
 	}
-	
-	
 	
 	function AllRoomDetailBack(){
         $(".web_AllRoomDetail").fadeOut();
         $(".web_AllRoomView").fadeIn();
     }
+	/*채팅으로  */
+	function chatGo(num){
+		window.location.href='chat.2?num='+num;
+	}
 	
 	/* 방정보 함수 */
-	function roomDetail(num){
+function roomDetail(num){
 		var detail="";
+		var detail2="";		
 		var room='';
 		chatInfo.forEach(function(i,index){
 			if(i.num==num){
@@ -474,34 +341,25 @@
 			}
 		})
 		/*방 상세정보  */
-		detail +="<tr><td><strong>방장</strong></td>";
-		detail +="<td colspan='3'>안알랴줌</td></tr>";
+		detail +='<tr><td class="strong" colspan="6"><h3>제목 :'+room.title+'</h3>';
+		detail +='<h4>상품명 : 안알랴줌 &nbsp &nbsp &nbsp 글쓴이 :안알랴줌</h4><a href="#">상품사진보기</a></td></tr>';
+		detail +='<tr><td class="strong" colspan="6">';
+		detail +='카테고리  &nbsp &nbsp '+room.options+'<br/>';		
+
+	
+		detail +='키워드  &nbsp &nbsp  '+room.tag+'</td></tr>';
+		detail +='<tr><td class="strong" colspan="3">거래 방식<h5>'+room.pay+'</h5></td>';
+		detail +='<td class="strong" colspan="3">상품 가격 <h5>'+room.price+' 원</h5></td></tr>';
+		detail +='<tr><td class="strong" colspan="3">참여 가능한 성별 <h5>'+room.gender+'</h5></td>';	
+		detail +='<td class="strong" colspan="3">참여 인원<h5>1/'+room.personnel+'명</h5></td></tr>';
 		
-		detail +="<tr><td><strong>제목</strong></td>";
-		detail +="<td colspan='3'>"+room.title+"</td></tr>";
-			
-		detail +="<tr><td><strong>카테고리</strong></td>";
-		detail +="<td>"+room.options+"</td>";
-		detail +="<td><strong>해쉬태그</strong></td>";
-		detail +="<td>#"+room.tag+"</td></tr>";
-		
-		detail +="<tr><td><strong>거래 방식</strong></td>";
-		detail +="<td>"+room.pay+"</td>";
-		detail +="<td><strong>가격</strong></td>";
-		detail +="<td>"+room.price+"</td></tr>";
-		
-		detail +="<tr><td><strong>참여 가능 (성별)</strong></td>";
-		detail +="<td>"+room.gender+"</td>";
-		detail +="<td><strong>인원</strong></td>";
-		detail +="<td>1/"+room.personnel+"</td></tr>";
-		
-		detail +="<tr><td><strong>내용</strong></td>";
-		detail +="<td colspan='3'>"+room.content+"</td></tr>";
-		
-		detail +="<tr><td colspan='2'><button onclick='AllRoomDetailBack()' class='btn'>뒤로가기</button></td>";
-		detail +="<td colspan='2'><button class='btn'>입장</button></td></tr>";
+		detail2 +='<p id="roomContent_S" align="center">내용</p>';
+		detail2 +='<div>'+room.content+'</div>';
+		/* detail +="<tr><td colspan='2'><button onclick='AllRoomDetailBack()' class='btn'>뒤로가기</button></td>";
+		detail +="<td colspan='2'><button class='btn'>입장</button></td></tr>"; */
 		
 		$("#web_ARDTable").html(detail);
+		$("#roomContent").html(detail2);
 		$(".web_AllRoomView").fadeOut();
 		$(".web_AllRoomDetail").fadeIn();
 	}
@@ -603,6 +461,13 @@
         },
         	web_AllRoom=function(){
             $(".web_AllRoom").toggle(500);
+			$("#web_AllRoomBtn").toggle(500);            
+			$("#web_AllRoomClose").toggle(500);            
+        },
+        	web_AllRoom2=function(){
+            $("#web_AllRoomClose").toggle(500); 
+            $(".web_AllRoom").toggle(500);
+            $("#web_AllRoomBtn").toggle(500);  
         },
         	exit1=function(){
             $("#popup1").fadeOut();
@@ -640,6 +505,7 @@
 		
 		//4.전체 채팅방
 		$("#web_AllRoomBtn").click(web_AllRoom);
+		$("#web_AllRoomBtn2").click(web_AllRoom2);
 		$("#web_AllRoomExitBtn").click(web_AllRoom);
 		$("#web_AllRoomBackBtn").click(AllRoomDetailBack);
 		
