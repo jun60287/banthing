@@ -85,7 +85,7 @@ public class Bts_Bean {
 	//기본 페이지 카테고리 등~
 	@RequestMapping("index.2")
 	public String index2(String addr, String options, String tag) {
-		String uri=request.getRequestURI();
+
 		if(addr != null) {
 			if(addr.equals("1")) {
 				model.addAttribute("lat",37.5663174209601);
@@ -114,7 +114,12 @@ public class Bts_Bean {
 			model.addAttribute("lng",126.977829174031);
 			model.addAttribute("level",11);
 		}
-		
+		if(options==null) {
+			options="전체";
+		}
+		if(tag==null) {
+			tag="";
+		}
 		model.addAttribute("options",options);
 		model.addAttribute("tag",tag);
 

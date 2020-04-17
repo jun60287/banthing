@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<link rel="stylesheet" href="<c:url value="/resources/css/base1/login.css"/>">
+<link rel="stylesheet" href="<c:url value="/resources/css/base1/login.css?val=1"/>">
 
 <div id="index">
 	<div class="name">
@@ -26,6 +26,7 @@
 	</div>
 </div>
 
+
 <c:if test="${ signup eq 'success' }">
 	<script>
 		alert('회원가입이 완료되었습니다.');
@@ -42,6 +43,12 @@
 		window.location.href="login.1";
 	</script>
 </c:if>
+<c:if test="${sessionId!=null}">
+	<script>
+		alert('현재 로그인 중 입니다.');
+		history.go(-1);
+	</script>
+</c:if>
 <script>
 	/* 일반 */
 	function loginCheck(){
@@ -53,7 +60,7 @@
 	/*카카오 */
 	function kakao(){
 		var app_key='f3009baa4d561e7bb39263c63ba9a21b';
-		var redirect_uri= 'http://localhost:8080/BTS/banThing/kakaologin';
+		var redirect_uri= 'http://192.168.0.136:8080/BTS/banThing/kakaologin';
 		var kakao_url='https://kauth.kakao.com/oauth/authorize?client_id='
 				+app_key+'&redirect_uri='+redirect_uri
 				+'&response_type=code';

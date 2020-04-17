@@ -34,5 +34,19 @@ public class Bts_DealDAO {
 		System.out.println(map);
 		return sqlSession.update("deal.dealStartUpdate",map); 
 	}
+	public int dealMoneyUpdate(int num,String nick) {
+		
+		Map map=new HashMap();
+		map.put("num", num);
+		map.put("nick", nick);
+		System.out.println(map);
+		return sqlSession.update("deal.dealMoneyUpdate",map); 
+	}
+	public int setDealState(String state,int num) {
+		Map map=new HashMap();
+		map.put("state", state);
+		map.put("num", num);
+		return sqlSession.update("deal.setDealState",map); 
+	}
 	 
 }

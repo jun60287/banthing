@@ -42,4 +42,8 @@ public class Bts_MemberDAO{
 	public void deleteMember(String id) throws Exception {
 		sqlSession.delete("member.deleteMember",id);
 	}
+	//nick으로 데이터 가져오기
+	public Bts_MemberVO selectMember01(String nick) {
+		return sqlSession.selectOne("member.selectMember01",nick);
+	}
 }

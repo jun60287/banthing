@@ -26,17 +26,16 @@
 		margin-bottom:5px;
 		width:314px;
 	}
-@media (min-width: 768px) {
-   #index{
-   	margin-left:-35%;
-   }
-}
-	@media (max-width: 768px) {
-		.name{
-			margin-top:-40px;
-		}
+	@media  {
+	   #index{
+	   	margin-left:-35%;
+	   	height:80%;
+	   	padding-top:50px;
+	   }
+	}
+	
 	.login{
-		padding-top:10%;
-		margin-top:-10%;
+			padding-top:10%;
+			margin-top:-10%;
 	}
 }

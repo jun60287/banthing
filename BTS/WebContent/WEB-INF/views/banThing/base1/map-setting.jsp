@@ -1,16 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<link rel="stylesheet" href="<c:url value="/resources/css/base1/map-setting.css"/>">
+<link rel="stylesheet" href="<c:url value="/resources/css/base1/map-setting.css?val=6"/>">
 
 <div id="index">
+<!--  -->
+	<div class="name">
+		<h1 class="bts">반띵</h1>
+		<img width="200" height="200" src="<c:url value="/resources/img/logo.jpg"/>">
+	</div>
 	<div class="map-name">
-		<h1>맵 필터 <br/>설정</h1>
+		<h1>맵 필터 설정</h1>
 	</div>
 	<div class="map-setting">
-		<div>
-		<br/><br/><br/>
-			<select id="address1">
+		<div><br/>
+			<select id="address1" class="btn">
 				<option value="1">서울</option>
 				<option value="2">부산</option>
 				<option value="3">광주</option>

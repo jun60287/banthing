@@ -11,6 +11,22 @@ public class Bts_DealVO {
 	private String product;
 	private String place;
 	private String price;
+	private String url;
+	private String tid;
+	
+	
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	public String getTid() {
+		return tid;
+	}
+	public void setTid(String tid) {
+		this.tid = tid;
+	}
 	public int getNum() {
 		return num;
 	}

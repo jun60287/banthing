@@ -1,8 +1,18 @@
-@media (min-width: 768px) {
-
+@media {
+	.container-fluid {
+		width: 90%;
+		margin:0 auto;
+	}
 	.top-box2{
 		display:inline-block;
 		text-align: center;
+		margin:0 auto;
+		width:100%;
+		min-width:157px;
+	}
+	.navbar-header{
+		margin-left: 18%;
+
 	}
 	.catergory-set ul{
 		padding-left: 0px;
@@ -23,7 +33,7 @@
 		display: none;
 	}
 }
-@media (max-width: 768px) {
+/* @media (max-width: 768px) {
 	.top-box2{
 		display:none;
 	}
@@ -40,4 +50,4 @@
 	#myroom-setting a{
 		color:#2E2E2E;
 	}
-}
+} */

@@ -1,10 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
- <link rel="stylesheet" href="<c:url value="/resources/css/footer.css"/>">
+ <link rel="stylesheet" href="<c:url value="/resources/css/footer.css?val=1"/>">
 
 <div class="container-fluid">
-	<div class="navbar-header">
+<!-- 	<div class="navbar-header">
 		<div class="rows" style="padding-top:15px;">
 			<div id="bottom-box">
 				<div class="col-xs-4" >
@@ -18,5 +18,5 @@
 				</div>
 			</div>
 		</div>
-	</div>
+	</div> -->
 </div>

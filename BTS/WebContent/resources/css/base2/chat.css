@@ -10,7 +10,44 @@
 	    padding-right:0px;
 	    padding-bottom:0px;
 	}
-
+	/*  */
+	#userInfo{
+		position: absolute;
+		top:405px;
+		right:5%;
+		width: 200px;
+		height: 150px;
+		background-color: rgba(178, 199, 217, 1);
+	}
+	#roomBtn{
+		position: absolute;
+		top:560px;
+		right:5%;
+		width: 200px;
+		height: 40px;
+		background-color: rgba(178, 199, 217, 1);
+	}
+	#modifyRoom{
+		display:none;
+		left:220px;
+		position: absolute;
+		top:20px;
+		right:5%;
+		width: 300px;
+		height: 500px;
+		background-color: #58ACFA;
+	}
+	#roomInfo{
+		display:none;
+		left:220px;
+		position: absolute;
+		top:20px;
+		right:5%;
+		width: 350px;
+		height: 447px;
+		background-color: #58ACFA;
+	}
+	/*  */
 	.chatLog {
 		position: absolute;
 		background-color: rgba(178, 199, 217, 1);

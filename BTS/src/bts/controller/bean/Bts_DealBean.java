@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -42,6 +44,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import bts.basic.function.Alram;
 import bts.model.dao.Bts_ChatDAO;
 import bts.model.dao.Bts_DealDAO;
 import bts.model.vo.Bts_ChatVO;
@@ -57,11 +60,16 @@ public class Bts_DealBean {
 	@Autowired
 	Bts_DealDAO dealDAO=null;
 	
+	Alram alram=new Alram();
 	HttpServletRequest request=null;
 	HttpServletResponse response=null;
 	HttpSession session=null;
 	Model model=null;
 	String uri=null;
+	String tid=null;  
+	int num=0;
+	String nick=null;
+	
 	@ModelAttribute
 	public void setting(HttpServletResponse response,HttpSession session,HttpServletRequest request,Model model) {
 		this.request=request;
@@ -87,7 +95,7 @@ public class Bts_DealBean {
 			//chat vo가져오기
 			Bts_ChatVO vo=chatDAO.getUniqueChatInfo(Dealvo.getNum());
 			
-			Dealvo.setDealState("거래 중");
+			Dealvo.setDealState("동의 중");
 			String[] users=vo.getUsers().split(",");
 			String update_Users="";
 			//0붙여서 동의 상황 보여주기  0->비동의 1->동의
@@ -118,6 +126,33 @@ public class Bts_DealBean {
 		
 		return uri.split("/")[3];
 	}
+	@RequestMapping("kakaoPay")
+	public String kakaoPay(String product,String price,int num,int userCount) {
+		Map map=alram.kakaoPay(product,price,userCount);
+		tid=(String)map.get("tid");
+		this.num=num;
+		this.nick=(String)session.getAttribute("sessionNick");
+		request.setAttribute("url", map.get("redirect_url"));
+		return "banThing/kakaoPay";
+	}
+	
+	@RequestMapping("PaySuccess")
+	public void PaySuccess(String pg_token) throws IOException {
+		alram.paySuccess(pg_token, tid);
+		
+		dealDAO.dealMoneyUpdate(num, nick);
+		PrintWriter io=response.getWriter(); io.print("<script>");	
+		io.print("self.close();"); 
+		io.print("</script>");
+		 
+	}
+	@RequestMapping("setDealState")
+	public String setDealState(String state,int num) {
+		System.out.println("현재 거래상태는?"+state);
+		dealDAO.setDealState(state,num);
+		return uri.split("/")[3];
+	}
+	
 	
 
 }

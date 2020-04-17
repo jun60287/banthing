@@ -89,5 +89,9 @@ public class Bts_ChatDAO {
 		chatList = sqlSession.selectList("chat.inchat", map);
 		return chatList;
 	}
-	
+	// 방 정보 수정
+	public void modifyChat(Bts_ChatVO vo) {
+		sqlSession.update("chat.modifyChat", vo);
+	}
+	 
 }

@@ -49,7 +49,6 @@ public class Bts_ChatBean {
 	private Bts_DealDAO dealDAO;
 	
 	public HttpServletRequest request=null;
-	public HttpServletResponse response=null;
 	public Model model = null;
 	public HttpSession session=null;
 	String uri=null;
@@ -59,9 +58,8 @@ public class Bts_ChatBean {
 	ChatMethod cm=new ChatMethod();
 	
 	@ModelAttribute
-	public void reqres(HttpServletRequest request,HttpServletResponse response, Model model,HttpSession session) {
+	public void reqres(HttpServletRequest request, Model model,HttpSession session) {
 		this.request=request;
-		this.response=response;
 		this.model = model;
 		this.session=session;
 		uri=request.getRequestURI();
@@ -91,7 +89,7 @@ public class Bts_ChatBean {
 	
 	//방 개설
 	@RequestMapping("submit")
-	public void createChat (Bts_ChatVO vo, MultipartHttpServletRequest multireq,HttpSession session) throws Exception {
+	public void createChat (Bts_ChatVO vo, MultipartHttpServletRequest multireq,HttpServletResponse response) throws Exception {
 		int num = 0;
 		if (request.getMethod().equals("POST")) {
 			MultipartFile mf = null;
@@ -123,6 +121,8 @@ public class Bts_ChatBean {
 				dealvo.setPrice(vo.getPrice());
 				dealvo.setProduct(vo.getProduct());
 				dealvo.setUsers(vo.getNick()+",");
+				dealvo.setUrl("");
+				dealvo.setTid("");
 				//거래 개설
 				dealDAO.createDeal(dealvo);
 				
@@ -142,53 +142,54 @@ public class Bts_ChatBean {
 			}
 		}
 	}
-	
-	//bts_chat 테이블을 json타입으로 변경
-	@RequestMapping(value = "chatinfo", headers="Accept=*/*",  produces="application/json")
-	@ResponseBody
-	public Map ChatInfo(String[] search){
-		// search[0~2] >>지도관련 변수들
-		// search[3] >>카테고리 , search[4] >>키워드 변수 		
-		List chatList=new ArrayList();
-		chatList=chatDAO.getChatInfo(search[3],search[4]);
-		
-		Map map=new HashMap(); 
-		map.put("chatList", chatList);
-		map.put("lat", search[0]); 
-		map.put("lng", search[1]);
-		map.put("level", search[2]);
-		map.put("options", search[3]);
-		map.put("keyword", search[4]);
-		 
-		return map;
-	}
-	
-	//bts_deal 테이블을 json타입으로 변경
-	@RequestMapping(value = "dealinfo", headers="Accept=*/*",  produces="application/json")
-	@ResponseBody
-	public Map DealInfo(int num){
-		
-		Bts_DealVO vo= dealDAO.getUniqueDeal(num);
-		Map map=new HashMap(); 
-		map.put("vo", vo);
-		
-		return map;
-	}
-	
-	//방 나가는 메서드
-	@RequestMapping("chatExit")
-	public void chatExit(String nick,String id,int num) throws Exception{
-	    
-		int check=chatDAO.chatExit(nick,num);
-		//check==1 나가짐
-		if(check==1) {
-			  cm.saveJson(path,num, id, nick,nick+"님께서 퇴장하셨습니다.");
-		}
-		response.sendRedirect("index.2");
-	}
+
+	// 방 수정
+	   @RequestMapping("modifyChat")
+	   public void modifyChat(Bts_ChatVO vo, MultipartHttpServletRequest multireq,HttpServletResponse response) {
+		    MultipartFile mf = null;
+			String newName = null;
+			
+			// 1. 기존이미지 삭제
+			mf = multireq.getFile(vo.getImg());
+			String path = multireq.getRealPath("chatImg");
+			String imgPath = path+ "\\" + vo.getImg();
+			File copyFile = new File(imgPath);
+			copyFile.delete();
+			
+			// 2. 이미지 다시 담기.
+			mf = multireq.getFile("orgImg");		
+			String orgName = mf.getOriginalFilename();// 오리지널 파일명
+			String imgName = orgName.substring(0, orgName.lastIndexOf('.')); 	// 파일명만 추출
+			String ext = orgName.substring(orgName.lastIndexOf('.'));			// 확장자 추출
+			long date = System.currentTimeMillis();								// 날짜 받아오기
+			newName = date + imgName + ext;
+			vo.setImg(newName);
+				// # 서버에 이미지 저장 : WEB-INF  >  chatImg
+				path = multireq.getRealPath("chatImg");
+				imgPath = path+ "\\" + newName;
+				copyFile = new File(imgPath);
+				try {
+					mf.transferTo(copyFile);
+					// 방 정보 수정
+					chatDAO.modifyChat(vo);
+				} catch (IllegalStateException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}		
+			try {
+				response.sendRedirect("chat.2?num="+vo.getNum());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+				
+		   
+	   }
+
 	//방 폭파~ 붐!!!
 	@RequestMapping("chatBoom")
-	public void chatExit(int num) throws IOException{
+	public void chatExit(int num,HttpServletResponse response) throws IOException{
+		System.out.println("붐붐붐~");
 		chatDAO.chatBoom(num);
 		response.sendRedirect("index.2");
 	}
@@ -201,10 +202,21 @@ public class Bts_ChatBean {
 		cm.saveJson(path,num, nick, nick,mes);
 	}
 	
+	//방 나가는 메서드
+	@RequestMapping("chatExit")
+	public void chatExit(String nick,String id,int num,HttpServletResponse response) throws Exception{
+	    
+		int check=chatDAO.chatExit(nick,num);
+		//check==1 나가짐
+		if(check==1) {
+			  cm.saveJson(path,num, id, nick,nick+"님께서 퇴장하셨습니다.");
+		}
+		response.sendRedirect("index.2");
+	}
 	//채팅 빼오기
    @ResponseBody
    @RequestMapping("logInfo")
-   public void logInfo(int num,String id,String nick,String entrance) throws Exception{
+   public void logInfo(int num,String id,String nick,String entrance,HttpServletResponse response) throws Exception{
 	  response.setHeader("Content-Type", "application/xml"); 
       response.setContentType("text/html;charset=UTF-8"); 
       response.setCharacterEncoding("utf-8");
@@ -234,26 +246,54 @@ public class Bts_ChatBean {
       response.getWriter().print(jo.toString());
    }
    
-   @RequestMapping("mychat.2")
-   public String mychat(String num) {
+   //내가만든 채팅방,내가 들어간 채팅방 찾기
+	@RequestMapping(value = "mychat", headers="Accept=*/*",  produces="application/json")
+	@ResponseBody
+	public Map mychat(String num) {
+		Map map=new HashMap(); 
+		List chatList=new ArrayList();
 	   if(num != null) {
 		   if(num.equals("1")) {
-			   List chatList=new ArrayList();
 			   chatList = chatDAO.mychat(nick);
-			   model.addAttribute("num",num);
-			   model.addAttribute("chatList",chatList);
-			   System.out.println("asdf");
 		   }else if(num.equals("2")){
-			   List chatList=new ArrayList();
 			   chatList = chatDAO.inchat(nick,id);
-			   model.addAttribute("num",num);
-			   model.addAttribute("chatList",chatList);
-			   System.out.println(chatList);
-			   System.out.println("asdf1");
 		   }
 	   }else {
 		   num = "0";
 	   }
-	   return uri.split("/")[3];
+	   map.put("myChat", chatList);
+	   return map;
    }
+	
+	//bts_chat 테이블을 json타입으로 변경
+	@RequestMapping(value = "chatinfo", headers="Accept=*/*",  produces="application/json")
+	@ResponseBody
+	public Map ChatInfo(String[] search){
+		// search[0~2] >>지도관련 변수들
+		// search[3] >>카테고리 , search[4] >>키워드 변수 		
+		List chatList=new ArrayList();
+		chatList=chatDAO.getChatInfo(search[3],search[4]);
+		
+		Map map=new HashMap(); 
+		map.put("chatList", chatList);
+		map.put("lat", search[0]);
+		map.put("lng", search[1]);
+		map.put("level", search[2]);
+		map.put("options", search[3]);
+		map.put("keyword", search[4]);
+		 
+		return map;
+	}
+	//bts_deal 테이블을 json타입으로 변경
+	@RequestMapping(value = "dealinfo", headers="Accept=*/*",  produces="application/json")
+	@ResponseBody
+	public Map DealInfo(int num){
+		
+		Bts_DealVO vo= dealDAO.getUniqueDeal(num);
+		Map map=new HashMap(); 
+		map.put("vo", vo);
+		
+		return map;
+	}
+
 }

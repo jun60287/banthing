@@ -7,10 +7,12 @@
 		<typeAlias type="bts.model.vo.Bts_MemberVO" alias="memberVO" />
 		<typeAlias type="bts.model.vo.Bts_ChatVO" alias="chatVO" />
 		<typeAlias type="bts.model.vo.Bts_DealVO" alias="dealVO" />
+		<typeAlias type="bts.model.vo.Bts_NoticeVO" alias="noticeVO" />
 	</typeAliases>
 	<mappers>
 		<mapper resource="/sql/bts_member.xml" />
 		<mapper resource="/sql/bts_chat.xml" />
 		<mapper resource="/sql/bts_deal.xml" />
+		<mapper resource="/sql/bts_notice.xml" />
 	</mappers>	
 </configuration> 

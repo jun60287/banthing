@@ -53,7 +53,7 @@ public class Logins {
 	            while ((line = br.readLine()) != null) {
 	                result += line;
 	            }
-	            
+	            System.out.println(result);
 	            JsonParser parser = new JsonParser();
 	            JsonElement element = parser.parse(result);
 	            

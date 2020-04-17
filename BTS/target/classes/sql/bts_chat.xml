@@ -39,4 +39,7 @@
   		<select id="inchat" parameterType="HashMap" resultType="chatVO">
 	  		select * from Bts_Chat where id!=#{id} and users like '%'||#{nick}||'%'
   		</select>
+  		  <update id="modifyChat" parameterType="chatVO">
+  		  	update Bts_Chat set title= #{title}, options= #{options}, tag= #{tag}, product= #{product}, price= #{price}, pay= #{pay}, gender= #{gender}, personnel= #{personnel}, place= #{place}, img= #{img}, content= #{content}, placeInfo = #{placeInfo} where num= #{num}
+  		  </update> 
 	</mapper>

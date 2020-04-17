@@ -150,7 +150,12 @@ public class Bts_MemberBean {
 		
 		return "update.1";
 	}
-
+	@RequestMapping("userProfile.1")
+	public String userProfile (String nick) throws Exception {
+		Bts_MemberVO vo = memberDAO.selectMember01(nick);
+		model.addAttribute("user", vo);
+		return "userProfile.1";
+	}
 	@RequestMapping("logout")
 	public String logout() throws Exception {
 		String token=(String)session.getAttribute("kakaotoken");

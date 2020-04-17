@@ -2,18 +2,17 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<link rel="stylesheet" href="<c:url value="/resources/css/base2/index.css"/>">
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<link rel="stylesheet" href="<c:url value="/resources/css/base2/index.css?val=123"/>">
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a44d7ff9bef3120be5c58e8aa20ddfe0&libraries=clusterer,services"></script>
 <script  src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script> 
-
+<link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
 <!-- 웹 -->
 <div class="web">
 	<div style="width:100%;height:100%;position:relative;">
 			<!-- 지우지마샘 
  		<button class="btn btn-warning" onclick="window.location.href='kakaoAlram'" 
 		>카톡메세지보내기</button>
-		<button class="btn btn-warning" onclick="window.location.href='logOut'" 
-		>연결끊기 </button> -->
 		 
 
 		<!-- 웹 1. 맵 -->
@@ -31,7 +30,7 @@
 		<div class="web_Icon" style="right:0px;top:50%">
 			<a href="#" id="web_AllRoomBtn"><i class="fas fa-arrow-left fa-2x"></i></a>
 		</div>
-		<div class="web_Icon" id="web_AllRoomClose" style="left:8%;top:50%;display:none">
+		<div class="web_Icon" id="web_AllRoomClose" style="right:0px;top:50%;display:none">
 			<a href="#" id="web_AllRoomBtn2"><i class="fas fa-arrow-right fa-2x"></i></a>
 		</div>
 		
@@ -69,7 +68,6 @@
 						<option value="">거래 방식</option>
 						<option value="협의">협의</option>
 						<option value="만나서">만나서</option>
-						<option value="계좌이체">계좌이체</option>
 						<option value="안전거래">안전거래</option>
 					</select><br/>
 					<select class="btn" name="gender" style="width:140px;">
@@ -99,12 +97,12 @@
 	   
 		<!-- 4. 맵 필터 설정  -->
 		<div class="web_MapFilter">
-		      		<div class="web_MFName">
+		    <div class="web_MFName">
        			<br/>
 				<h1>맵 필터 설정</h1>
 			</div>
 			
-			<div class="web_MFSetting" style="height:60%">
+			<div class="web_MFSetting">
 				<select class="btn" id="address1">
 					<option value="1">서울</option>
 					<option value="2">부산</option>
@@ -132,7 +130,7 @@
 				</select><br/>
 				<input type="text" id="tag" class="btn" placeholder="검색어" />
 			</div>
-			<div class="btn web_MFBtn" style="height:20%">
+			<div class="btn web_MFBtn">
 				<button onclick="tossvl()" class="btn">
 					적용
 				</button>
@@ -141,66 +139,241 @@
 				</button><br/><br/>
 				<button class="btn exit3" id="web_MapFilterExitBtn">닫기</button>
 			</div>
-			</div>
-	   </div> 
+		</div>
 	   
 	<!-- 5.내 채팅 목록  -->
-	<div class="web_MyRoom">
-	
-       		<h1 style="color:black">내 채팅 목록</h1>
-       		<table class="table">
-		      <tbody>
-		        <tr>
-		          <td><strong>방 제목</strong></td>
-		          <td><strong>인원수</strong></td>
-		        </tr>
-		      	<tr>
-		      		<td><a>안 알려줌</a></td>
-		      		<td>1/2</td>
-		      	</tr>
-		      	<tr>
-		      		<td><a>안 알려줌</a></td>
-		      		<td>3/5</td>
-		      	</tr>
-		      </tbody>
-		    </table>
+		<div class="web_MyRoom">
+		
+			<div class="btn-setting">
+				<br/>
+				<button id="button"  value="1" >내가 만든방</button>
+				<button id="button1"  value="2" >들어간 방</button>
+			</div>
+			<!-- 내가 만든 채팅방 -->
+			<div class="web_MyRoom_Me" style="display:none;overflow:auto;height:80%;">
+				<div class="name">
+					<h3 class="bts">내가 만든 채팅방</h3>
+				</div>
+				<div class="login">
+					<table class="table" style="width:100%;">
+						<thead>
+							<tr>
+								<td>방제목</td>
+								<td>상품명</td>
+								<td>최대인원</td>
+								<td>지역</td>
+							</tr>
+						</thead>
+						<tbody id="web_MyRoom_MeBody">
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- 내가 들어간 채팅방 -->
+			<div class="web_MyRoom_You" style="display:none;overflow:auto;height:80%;">
+				<div class="name">
+					<h3 class="bts">내가 들어간 채팅방</h3>
+				</div>
+				<div class="login">
+					<table class="table" style="width:100%;">
+						<thead>
+							<tr>
+								<td>방제목</td>
+								<td>상품명</td>
+								<td>최대인원</td>
+								<td>지역</td>
+							</tr>
+						</thead>
+						<tbody id="web_MyRoom_YouBody">
+						</tbody>
+					</table>
+				</div>
+			</div>
            <button class="btn web_Exit" id="web_MyRoomExitBtn">닫기</button>
        </div>
-	</div>
 	
 	<!-- 6.전체 채팅 목록  -->
-	<div class="web_AllRoom">
-	
-		<!-- 방 상세보기 -->
-		<div class="web_AllRoomDetail" style="display:none;width:100%;height:100%;font-size:30px;">
-			<h1 style="color:black">방 정보</h1>
-			<table class="table" id="web_ARDTable">
-		    </table>
-		    <div id='roomContent'>
+		<div class="web_AllRoom">
+		
+			<!-- 방 상세보기 -->
+			<div class="web_AllRoomDetail" style="display:none;width:100%;height:100%;font-size:30px;">
+				<h1 style="color:black">방 정보</h1>
+				<table class="table" id="web_ARDTable">
+			    </table>
+			    <div id='roomContent'>
+			    </div>
+			</div>
+			<!-- 방 목록 보기 -->
+			<div class="web_AllRoomView">
+				<h1 style="color:black">채팅 목록</h1>
+				<table class="table">
+		     		<thead>
+			      		<tr>
+				          <td><strong>번호</strong></td>
+				          <td><strong>방 제목</strong></td>
+				          <td><strong>인원수</strong></td>
+				          <td><strong>방 정보</strong></td>
+				          <td><strong></strong></td>
+				        </tr>
+		     		</thead>
+			    	<tbody id="web_ARTbody">
+			    	</tbody>
+			    </table>
 		    </div>
 		</div>
-		<!-- 방 목록 보기 -->
-		<div class="web_AllRoomView">
-			<h1 style="color:black">채팅 목록</h1>
-			<table class="table">
-	     		<thead>
-		      		<tr>
-			          <td><strong>번호</strong></td>
-			          <td><strong>방 제목</strong></td>
-			          <td><strong>인원수</strong></td>
-			          <td><strong>방 정보</strong></td>
-			          <td><strong></strong></td>
-			        </tr>
-	     		</thead>
-		    	<tbody id="web_ARTbody">
-		    	</tbody>
-		    </table>
-	    </div>
-   </div>
+		
+		<!-- 7.공지사항 -->
+		<div class="web_Notice" style="display:none;">
+			<div class="web_NoticeDetail" style="display:show;overflow:auto;height:80%;">
+				<h1 style="color:black">공지 사항</h1>
+					<table class="table">
+				      <thead>
+				        <tr>
+				          <th>#</th>
+				          <th>제목</th>
+				          <th>내용</th>
+				          <th>등록일</th>
+				          <c:if test="${sessionId eq 'admin'}">
+				          <th><button id="web_NoticewriteBtn">글작성</button></th>
+				          </c:if>
+				        </tr>
+				      </thead>
+				      <tbody id="web_Notice_body">
+					  </tbody>
+			    </table>
+		    </div>
+		    <!-- 공지사항 작성 -->
+			<div class="web_Noticewirte" style="display:none;overflow:auto;height:80%;">
+				<h1 style="color:black">공지 사항 작성</h1>
+					<form action="notice" method="POST">
+						<table class="table">
+					      <tbody>
+					        <tr>
+					          <td>제 목</td>
+					          <td><input type="text"name="title" id="title"style="width:280px;"placeholder="t i t l e"></td>
+					        </tr>
+					        <tr>
+					          <td>공지내용</td>
+					          <td><textarea name="content" id="content"style="width:280px; height:250px;" placeholder="c o n t e n t"></textarea></td>
+					        </tr>
+				    </table>
+				    <c:if test="${sessionId eq 'admin'}">
+				          <input type="submit" value="확인">
+					</c:if>
+			    </form>
+		    </div>
+		    <button class="btn web_Exit" id="web_NoticeExitBtn">닫기</button>
+		</div>
+		
+		<!-- 8.회원 정보 -->
+		<div class="web_Member">
+			<div id="member-set" class="icon_set">
+				<br/>
+				<button class="btn btn-warning" style="font-size: 32px;width:230px;" onclick="window.location.href='update.1'">
+					사용자 정보 변경
+				</button><br/><br/>
+				<button class="btn btn-warning" style="font-size: 32px;width:230px;" onclick="popup()">
+					회원 탈퇴
+				</button><br/>
+			</div>
+			<button class="btn web_Exit" id="web_MemberExitBtn">닫기</button>
+		</div>
+		
+	</div>
 </div>
-
 <script src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
 <script>
+	$("#button").click(function(){
+		$(".web_MyRoom_You").hide(500);
+		$(".web_MyRoom_Me").show(500);
+		
+		var root = $(this).attr('value');
+		var detail="";
+		$.ajax({
+			url:'mychat',
+	        type: 'get',
+	        data: { num:root},
+	        dataType:'json', 
+	        contentType:"application/json;charset=UTF-8",
+			success:function(data){
+				var mychat=data['myChat'];
+				console.log(mychat);
+				mychat.forEach(function(i){
+					detail +='<tr><td>'+i.title+'</td>';
+					detail +='<td>'+i.product+'</td>';
+					detail +='<td>'+i.personnel+'</td>';
+					detail +='<td>'+i.place+'</td></tr>';
+				})
+				$("#web_MyRoom_MeBody").html(detail);
+	 		}
+		});
+	});
+	
+	$("#button1").click(function(){
+		$(".web_MyRoom_Me").hide(500);
+		$(".web_MyRoom_You").show(500);
+		
+		var root = $(this).attr('value');
+		var detail="";
+		$.ajax({
+			url:'mychat',
+	        type: 'get',
+	        data: { num:root},
+	        dataType:'json', 
+	        contentType:"application/json;charset=UTF-8",
+			success:function(data){
+				var mychat=data['myChat'];
+				console.log(mychat);
+				mychat.forEach(function(i){
+					detail +='<tr><td>'+i.title+'</td>';
+					detail +='<td>'+i.product+'</td>';
+					detail +='<td>'+i.personnel+'</td>';
+					detail +='<td>'+i.place+'</td></tr>';
+				})
+				$("#web_MyRoom_YouBody").html(detail);
+	 		}
+		});
+	});
+	//공지사항 클릭이벤트
+	$("#web_NoticewriteBtn").click(function(){
+		$(".web_NoticeDetail").hide(500);
+		$(".web_Noticewirte").show(500);
+		
+	});
+	//공지사항 가져오기
+	$("#web_Notice").ready(function(){
+		
+		var cont="";
+		var num=0;
+		$.ajax({
+			url:"chnotice",
+			type:'get',
+			dataType:'json',
+			contentType:"application/json;charset=UTF-8",
+			success:function(data){
+				var noti = data['notice'];
+				console.log(noti);	
+				noti.forEach(function(i){
+					console.log(i.reg);
+					cont += '<tr><td>'+num+1+'</td>';
+					cont += '<td>'+i.title+'</td>';
+					cont += '<td>'+i.content+'</td>';
+					cont += '<td>'+i.reg+'</td></tr>';
+				})	
+				$("#web_Notice_body").html(cont);
+			}
+		});
+	});
+	
+		
+	function popup(){
+	    var url = "checkPs.1";
+	    var name = "popup test";
+	    var option = "width = 500, height = 500, top = 100, left = 200, location = no"
+	    window.open(url, name, option);
+	    
+	}
 	var chatInfo;
 	function address_setting(){
 	    new daum.Postcode({
@@ -269,53 +442,52 @@
 	}
 	//맵 마킹
 	function marking(){
-       $.ajax({
-         url:"chatinfo",
-           type: 'get',
-           dataType:'json',
-           traditional : true,
-           data: {'search' : ['${lat}','${lng}','${level}','${options}','${tag}']},
-           contentType:"application/json;charset=UTF-8",
-         success:function(data){
-            chatInfo=data['chatList'];
-             var bounds = map.getBounds();
-             var sw = bounds.getSouthWest();  //남서쪽
-             var ne = bounds.getNorthEast(); //북동쪽 
-             var lb=new kakao.maps.LatLngBounds(sw, ne);
-             let result="";
-             var count=0;
-            $(data['chatList']).map(function(index, i) {
-               var x=i.placeInfo.split('-')[0];
-               var y=i.placeInfo.split('-')[1];
-                var markerposition=new kakao.maps.LatLng(y,x);
-                if(lb.contain(markerposition)){
-                   var marker=addMarker(markerposition,count);
-                   var nowUsers=i.users.split(',').length-1;
-                   count++;
-                   /*방 정보 */
-                   result +="<tr>";
-                   result +="<td>"+count+"</td>";
-                   result +="<td>"+i.title+"</td>";
-                   result +="<td>"+nowUsers+"/"+i.personnel+"</td>";
-                   result +="<td>"+"<button onclick='roomDetail("+i.num+")' class='btn'>상세보기</button>"+"</td>";
-                   if(nowUsers==i.personnel){
-                      if(i.users.split(',').includes("${sessionNick}")){
-                         result +="<td>"+"<button class='btn' onclick='chatGo("+i.num+")'>입장</button>"+"</td>";
-                      }else{
-                         result +="<td>"+"<button class='btn' onclick='fullChat()'>입장</button>"+"</td>";
-                      }
-                   }else{
-                      result +="<td>"+"<button class='btn' onclick='chatGo("+i.num+")'>입장</button>"+"</td>";
-                   }
-                   result +="</tr>";
+	 	$.ajax({
+			url:"chatinfo",
+	        type: 'get',
+	        dataType:'json',
+	        traditional : true,
+	        data: {'search' : ['${lat}','${lng}','${level}','${options}','${tag}']},
+	        contentType:"application/json;charset=UTF-8",
+			success:function(data){
+				chatInfo=data['chatList'];
+			    var bounds = map.getBounds();
+			    var sw = bounds.getSouthWest();  //남서쪽
+			    var ne = bounds.getNorthEast(); //북동쪽 
+			    var lb=new kakao.maps.LatLngBounds(sw, ne);
+			    let result="";
+		    	var count=0;
+				$(data['chatList']).map(function(index, i) {
+					var x=i.placeInfo.split('-')[0];
+					var y=i.placeInfo.split('-')[1];
+				    var markerposition=new kakao.maps.LatLng(y,x);
+				    if(lb.contain(markerposition)){
+			    		var marker=addMarker(markerposition,count);
+			    		var nowUsers=i.users.split(',').length-1;
+				    	count++;
+				    	/*방 정보 */
+			    		result +="<tr>";
+			    		result +="<td>"+count+"</td>";
+			    		result +="<td>"+i.title+"</td>";
+			    		result +="<td>"+nowUsers+"/"+i.personnel+"</td>";
+			    		result +="<td>"+"<button onclick='roomDetail("+i.num+","+nowUsers+")' class='btn'>상세보기</button>"+"</td>";
+			    		if(nowUsers==i.personnel){
+			    			if(i.users.split(',').includes("${sessionNick}")){
+				    			result +="<td>"+"<button class='btn' onclick='chatGo("+i.num+")'>입장</button>"+"</td>";
+			    			}else{
+			    				result +="<td>"+"<button class='btn' onclick='fullChat()'>입장</button>"+"</td>";
+			    			}
+			    		}else{
+			    			result +="<td>"+"<button class='btn' onclick='chatGo("+i.num+")'>입장</button>"+"</td>";
+			    		}
+			    		result +="</tr>";
 
-                }                
-               $("#web_ARTbody").html(result);
-            });
-          }
-      });
-   }
-
+				    }				    
+					$("#web_ARTbody").html(result);
+				});
+	 		}
+		});
+	}
 	
 	function fullChat(){
 		alert("유감스럽게도 꽉찼어요 ㅠ-ㅠ,,");
@@ -331,7 +503,7 @@
 	}
 	
 	/* 방정보 함수 */
-function roomDetail(num){
+function roomDetail(num, nowUsers){
 		var detail="";
 		var detail2="";		
 		var room='';
@@ -341,22 +513,21 @@ function roomDetail(num){
 			}
 		})
 		/*방 상세정보  */
-		detail +='<tr><td class="strong" colspan="6"><h3>제목 :'+room.title+'</h3>';
-		detail +='<h4>상품명 : 안알랴줌 &nbsp &nbsp &nbsp 글쓴이 :안알랴줌</h4><a href="#">상품사진보기</a></td></tr>';
-		detail +='<tr><td class="strong" colspan="6">';
-		detail +='카테고리  &nbsp &nbsp '+room.options+'<br/>';		
-
-	
-		detail +='키워드  &nbsp &nbsp  '+room.tag+'</td></tr>';
-		detail +='<tr><td class="strong" colspan="3">거래 방식<h5>'+room.pay+'</h5></td>';
-		detail +='<td class="strong" colspan="3">상품 가격 <h5>'+room.price+' 원</h5></td></tr>';
-		detail +='<tr><td class="strong" colspan="3">참여 가능한 성별 <h5>'+room.gender+'</h5></td>';	
-		detail +='<td class="strong" colspan="3">참여 인원<h5>1/'+room.personnel+'명</h5></td></tr>';
+		detail +='<tr><td class="strong" colspan="4"><h3 style="margin-top:2px;margin-bottom:15px;">제목 :'+room.title+'</h3>';
+		detail +='<h4>상품명 : &nbsp'+room.product+'&nbsp &nbsp &nbsp 글쓴이 : &nbsp'+room.nick+'</h4><h5><a href="#">상품사진보기</a></h5></td></tr>';
 		
-		detail2 +='<p id="roomContent_S" align="center">내용</p>';
+		detail +='<tr><td class="strong" colspan="2">';		
+		detail +='<h5 align="right">카테고리&nbsp &nbsp &nbsp</h5></td> <td class="strong" colspan="2"><h4 align="left">&nbsp &nbsp'+room.options+'</h4></td></tr>';	
+		
+		detail +='<tr><td class="strong" colspan="2"><h5>거래 방식</h5> <h4>'+room.pay+'</h4></td>';
+		detail +='<td class="strong" colspan="2"><h5>상품 가격</h5> <h4>'+room.price+' 원</h4></td></tr>';
+		detail +='<tr><td class="strong" colspan="2"><h5>참여 가능한 성별</h5> <h4>'+room.gender+'</h4></td>';
+		detail +='<td class="strong" colspan="2"><h5>참여 인원</h5> <h4>'+nowUsers+'/'+room.personnel+'명</h4></td></tr>';
+		
 		detail2 +='<div>'+room.content+'</div>';
-		/* detail +="<tr><td colspan='2'><button onclick='AllRoomDetailBack()' class='btn'>뒤로가기</button></td>";
-		detail +="<td colspan='2'><button class='btn'>입장</button></td></tr>"; */
+		detail2 +='<h5>검색 키워드 : &nbsp '+room.tag+'</h5>';
+		detail2 +="<button onclick='AllRoomDetailBack()' class='btn'>뒤로가기</button> &nbsp &nbsp ";
+		detail2 +="<button class='btn' onclick='chatGo("+num+")'>입장</button>"; 
 		
 		$("#web_ARDTable").html(detail);
 		$("#roomContent").html(detail2);
@@ -448,15 +619,12 @@ function roomDetail(num){
             $("#popup1").fadeIn();
         },
        		web_AddRoom=function(){
-            $("#web_Map").css("opacity","0.7");
             $(".web_Room").fadeIn();
         },
         	web_MapFilter=function(){
-            $("#web_Map").css("opacity","0.7");
             $(".web_MapFilter").fadeIn();
         },
         	web_MyRoom=function(){
-            $("#web_Map").css("opacity","0.7");
             $(".web_MyRoom").fadeIn();
         },
         	web_AllRoom=function(){
@@ -469,14 +637,21 @@ function roomDetail(num){
             $(".web_AllRoom").toggle(500);
             $("#web_AllRoomBtn").toggle(500);  
         },
+        	web_Notice=function(){
+            $(".web_Notice").fadeIn(500); 
+        },
+        	web_Member=function(){
+            $(".web_Member").fadeIn(500); 
+        },
         	exit1=function(){
             $("#popup1").fadeOut();
         },
         	web_Exit=function(){
             $(".web_Room").fadeOut();
             $(".web_MapFilter").fadeOut();
+            $(".web_Notice").fadeOut();
+            $(".web_Member").fadeOut();
             $(".web_MyRoom").hide(500);
-            $("#web_Map").css("opacity","1");
         };
    
 		
@@ -493,21 +668,33 @@ function roomDetail(num){
 		//웹 
 		//1.방 개설
 		$("#web_RoomBtn").click(web_AddRoom);
+		$("#web_FooterBtn1").click(web_AddRoom);
 		$("#web_RoomExitBtn").click(web_Exit);
 		
 		//2.맵필터 
 		$("#web_MapFilterBtn").click(web_MapFilter);
+		$("#web_FooterBtn2").click(web_MapFilter);
 		$("#web_MapFilterExitBtn").click(web_Exit);
 		
 		//3.내채팅방
 		$("#web_MyRoomBtn").click(web_MyRoom);
+		$("#web_FooterBtn3").click(web_MyRoom);
 		$("#web_MyRoomExitBtn").click(web_Exit);
 		
 		//4.전체 채팅방
 		$("#web_AllRoomBtn").click(web_AllRoom);
+		$("#web_FooterBtn4").click(web_AllRoom);
 		$("#web_AllRoomBtn2").click(web_AllRoom2);
 		$("#web_AllRoomExitBtn").click(web_AllRoom);
 		$("#web_AllRoomBackBtn").click(AllRoomDetailBack);
+		
+		//5.공지사항
+		$("#web_FooterBtn5").click(web_Notice);
+		$("#web_NoticeExitBtn").click(web_Exit);
+		
+		//6.회원 정보
+		$("#web_FooterBtn6").click(web_Member);
+		$("#web_MemberExitBtn").click(web_Exit);
 		
 		//앱
 		$("#left").click(left);

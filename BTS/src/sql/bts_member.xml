@@ -30,4 +30,7 @@
 		<select id="nickCheck" parameterType="String" resultType="String">
 	         select nick from Bts_Member where id = #{value}
 	    </select>
+	      <select id="selectMember01" parameterType="String" resultType="memberVO">
+	      	select * from Bts_Member where nick = #{nick}
+	      </select> 
 	</mapper>
