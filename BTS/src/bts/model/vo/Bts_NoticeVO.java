@@ -26,13 +26,8 @@ public class Bts_NoticeVO {
 		return reg;
 	}
 	public void setReg(String reg) {
-		try {
-			Date date = sdf.parse(reg);
-		}catch(Exception e) {
-			e.printStackTrace();
-		}finally {
-			this.reg = (String)date;
-		}
+		System.out.println(reg);
+		this.reg = reg;
 	}
 	
 }
