@@ -25,6 +25,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -71,6 +73,7 @@ public class Bts_ChatBean {
 	//채팅방  접속할 곳
 	@RequestMapping("chat.2")
 	public String chat(int num) throws Exception{
+		System.out.println(num+"번 채팅방 페이지로 이동!");
 		//users컬럼에 세션에 저장된 닉과 테이블번호 보내서 ex)최병찬,꼴로 저장
 		int check=chatDAO.setUsers(nick+",",num);
 		//특정 튜플 가져오기.
@@ -92,6 +95,7 @@ public class Bts_ChatBean {
 	public void createChat (Bts_ChatVO vo, MultipartHttpServletRequest multireq,HttpServletResponse response) throws Exception {
 		int num = 0;
 		if (request.getMethod().equals("POST")) {
+			System.out.println("방 개설 중!");
 			MultipartFile mf = null;
 			String newName = null;
 			try {
@@ -142,54 +146,55 @@ public class Bts_ChatBean {
 			}
 		}
 	}
-
-	// 방 수정
-	   @RequestMapping("modifyChat")
-	   public void modifyChat(Bts_ChatVO vo, MultipartHttpServletRequest multireq,HttpServletResponse response) {
-		    MultipartFile mf = null;
-			String newName = null;
-			
-			// 1. 기존이미지 삭제
-			mf = multireq.getFile(vo.getImg());
-			String path = multireq.getRealPath("chatImg");
-			String imgPath = path+ "\\" + vo.getImg();
-			File copyFile = new File(imgPath);
-			copyFile.delete();
-			
-			// 2. 이미지 다시 담기.
-			mf = multireq.getFile("orgImg");		
-			String orgName = mf.getOriginalFilename();// 오리지널 파일명
-			String imgName = orgName.substring(0, orgName.lastIndexOf('.')); 	// 파일명만 추출
-			String ext = orgName.substring(orgName.lastIndexOf('.'));			// 확장자 추출
-			long date = System.currentTimeMillis();								// 날짜 받아오기
-			newName = date + imgName + ext;
-			vo.setImg(newName);
-				// # 서버에 이미지 저장 : WEB-INF  >  chatImg
-				path = multireq.getRealPath("chatImg");
-				imgPath = path+ "\\" + newName;
-				copyFile = new File(imgPath);
-				try {
-					mf.transferTo(copyFile);
-					// 방 정보 수정
-					chatDAO.modifyChat(vo);
-				} catch (IllegalStateException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}		
-			try {
-				response.sendRedirect("chat.2?num="+vo.getNum());
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		@RequestMapping("updateChat.1")
+		public String updateChat(int num) throws Exception{
+	   		Bts_ChatVO chatVo= chatDAO.getUniqueChatInfo(num);
+	   		model.addAttribute("vo", chatVo);
+			return uri.split("/")[3];	   		
+		}
+		// 방 수정
+	   @RequestMapping("updateChat")
+	   public String updateChat(int num,Bts_ChatVO vo,MultipartHttpServletRequest multireq,HttpServletResponse response) {
+			   	System.out.println("채팅방 수정 중!");
+			    MultipartFile mf = null;
+				String newName = null;
+				// 1. 기존이미지 삭제
+				mf = multireq.getFile(vo.getImg());
+				String path = multireq.getRealPath("chatImg");
+				String imgPath = path+ "\\" + vo.getImg();
+				File copyFile = new File(imgPath);
+				copyFile.delete();
 				
-		   
+				// 2. 이미지 다시 담기.
+				mf = multireq.getFile("orgImg");		
+				String orgName = mf.getOriginalFilename();// 오리지널 파일명
+				String imgName = orgName.substring(0, orgName.lastIndexOf('.')); 	// 파일명만 추출
+				String ext = orgName.substring(orgName.lastIndexOf('.'));			// 확장자 추출
+				long date = System.currentTimeMillis();								// 날짜 받아오기
+				newName = date + imgName + ext;
+				vo.setImg(newName);
+					// # 서버에 이미지 저장 : WEB-INF  >  chatImg
+					path = multireq.getRealPath("chatImg");
+					imgPath = path+ "\\" + newName;
+					copyFile = new File(imgPath);
+					try {
+						mf.transferTo(copyFile);
+						// 방 정보 수정
+						chatDAO.modifyChat(vo);
+						model.addAttribute("update", "success");
+					} catch (Exception e) {
+						e.printStackTrace();
+						System.out.println("채팅방 수정 에러");
+					}finally {
+						System.out.println("채팅방 수정 완료");
+					}
+					return "updateChat.1";
 	   }
 
 	//방 폭파~ 붐!!!
 	@RequestMapping("chatBoom")
 	public void chatExit(int num,HttpServletResponse response) throws IOException{
-		System.out.println("붐붐붐~");
+		System.out.println(num+"채팅방 Boom~~");
 		chatDAO.chatBoom(num);
 		response.sendRedirect("index.2");
 	}
@@ -198,6 +203,7 @@ public class Bts_ChatBean {
 	//채팅 저장
 	@RequestMapping("chatSave")
 	public void chatSave(int num,String mes,String nick) throws Exception{
+		System.out.println(num+"번 json파일 메세지 저장!");
 		//바꾸지마샘 채팅은 닉으로 보낼거임 ㅋㅋ
 		cm.saveJson(path,num, nick, nick,mes);
 	}
@@ -205,11 +211,11 @@ public class Bts_ChatBean {
 	//방 나가는 메서드
 	@RequestMapping("chatExit")
 	public void chatExit(String nick,String id,int num,HttpServletResponse response) throws Exception{
-	    
 		int check=chatDAO.chatExit(nick,num);
 		//check==1 나가짐
 		if(check==1) {
-			  cm.saveJson(path,num, id, nick,nick+"님께서 퇴장하셨습니다.");
+			System.out.println(nick+"님이"+num+"번 방에 퇴장 했습니다.");
+			cm.saveJson(path,num, id, nick,nick+"님께서 퇴장하셨습니다.");
 		}
 		response.sendRedirect("index.2");
 	}
@@ -284,12 +290,23 @@ public class Bts_ChatBean {
 		 
 		return map;
 	}
+	
 	//bts_deal 테이블을 json타입으로 변경
 	@RequestMapping(value = "dealinfo", headers="Accept=*/*",  produces="application/json")
 	@ResponseBody
 	public Map DealInfo(int num){
 		
 		Bts_DealVO vo= dealDAO.getUniqueDeal(num);
+		Map map=new HashMap(); 
+		map.put("vo", vo);
+		
+		return map;
+	}
+	@RequestMapping(value = "roomInfo", headers="Accept=*/*",  produces="application/json")
+	@ResponseBody
+	public Map roomInfo(int num){
+		
+		Bts_ChatVO vo= chatDAO.getUniqueChatInfo(num);
 		Map map=new HashMap(); 
 		map.put("vo", vo);
 		

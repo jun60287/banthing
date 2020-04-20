@@ -85,7 +85,7 @@ public class Bts_Bean {
 	//기본 페이지 카테고리 등~
 	@RequestMapping("index.2")
 	public String index2(String addr, String options, String tag) {
-
+		System.out.println("index 2페이지 이동!");
 		if(addr != null) {
 			if(addr.equals("1")) {
 				model.addAttribute("lat",37.5663174209601);

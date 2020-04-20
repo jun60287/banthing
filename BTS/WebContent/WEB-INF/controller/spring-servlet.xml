@@ -43,7 +43,7 @@
 		class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close" 
 		p:driverClassName="oracle.jdbc.driver.OracleDriver"
-		p:url="jdbc:oracle:thin:@nullmaster.iptime.org:3000:orcl"
+		p:url="jdbc:oracle:thin:@192.168.0.252:1521:orcl"
 		p:username="git02" 
 		p:password="git02"
 	/>

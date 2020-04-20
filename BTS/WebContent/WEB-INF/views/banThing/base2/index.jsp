@@ -3,7 +3,7 @@
 <%@ taglib prefix="tiles" uri="http://tiles.apache.org/tags-tiles" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-<link rel="stylesheet" href="<c:url value="/resources/css/base2/index.css?val=123"/>">
+<link rel="stylesheet" href="<c:url value="/resources/css/base2/index.css?val=5"/>">
 <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a44d7ff9bef3120be5c58e8aa20ddfe0&libraries=clusterer,services"></script>
 <script  src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script> 
 <link href="https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap" rel="stylesheet">
@@ -23,9 +23,11 @@
 			<a href="#" id="web_refresh" style="left:10;"><i class="fas fa-redo-alt fa-2x"></i></a>
 		</div>
 		<div class="web_Icon" style="right:10px">
+		<c:if test="${sessionId!=null}">
 			<a href="#" id="web_MyRoomBtn"><i class="fas fa-sms fa-2x"></i></a>
-			<a href="#" id="web_MapFilterBtn"><i class="fas fa-filter fa-2x"></i></a>
 			<a href="#" id="web_RoomBtn"><i class="fas fa-plus fa-2x"></i></a>
+		</c:if>
+			<a href="#" id="web_MapFilterBtn"><i class="fas fa-filter fa-2x"></i></a>
 		</div>
 		<div class="web_Icon" style="right:0px;top:50%">
 			<a href="#" id="web_AllRoomBtn"><i class="fas fa-arrow-left fa-2x"></i></a>
@@ -39,8 +41,8 @@
 		
 			<h1> 방 개설</h1>
 			
-			<!-- 웹 방 개설 셋팅 -->   <!-- onsubmit="return check()"  -->
-				<form name="web_RoomSet" class="web_RoomSet" action="submit" method="post" enctype="multipart/form-data">
+			<!-- 웹 방 개설 셋팅 -->   
+				<form name="web_RoomSet" class="web_RoomSet" action="submit" onsubmit="return check()" method="post" enctype="multipart/form-data">
 	           		<input type="hidden" name="id" value="${sessionId}"/>
 	           	
 	           		<input type="text" class="btn" name="title" placeholder="방제목"><br/>
@@ -245,22 +247,21 @@
 		    <!-- 공지사항 작성 -->
 			<div class="web_Noticewirte" style="display:none;overflow:auto;height:80%;">
 				<h1 style="color:black">공지 사항 작성</h1>
-					<form action="notice" method="POST">
 						<table class="table">
 					      <tbody>
 					        <tr>
 					          <td>제 목</td>
-					          <td><input type="text"name="title" id="title"style="width:280px;"placeholder="t i t l e"></td>
+					          <td><input type="text" id="notice_title"style="width:280px;"placeholder="t i t l e"></td>
 					        </tr>
 					        <tr>
 					          <td>공지내용</td>
-					          <td><textarea name="content" id="content"style="width:280px; height:250px;" placeholder="c o n t e n t"></textarea></td>
+					          <td><textarea id="notice_content" style="width:280px; height:250px;" placeholder="c o n t e n t"></textarea></td>
 					        </tr>
 				    </table>
+				     <button id="back_notice">뒤로가기</button>
 				    <c:if test="${sessionId eq 'admin'}">
-				          <input type="submit" value="확인">
+				          <button id="upload_not">확인</button>
 					</c:if>
-			    </form>
 		    </div>
 		    <button class="btn web_Exit" id="web_NoticeExitBtn">닫기</button>
 		</div>
@@ -269,10 +270,10 @@
 		<div class="web_Member">
 			<div id="member-set" class="icon_set">
 				<br/>
-				<button class="btn btn-warning" style="font-size: 32px;width:230px;" onclick="window.location.href='update.1'">
+				<button class="btn btn-warning" style="font-size: 26px;width:230px;" onclick="window.location.href='update.1'">
 					사용자 정보 변경
-				</button><br/><br/>
-				<button class="btn btn-warning" style="font-size: 32px;width:230px;" onclick="popup()">
+				</button><br/>
+				<button class="btn btn-warning" style="font-size: 26px;width:230px;" onclick="delMember()">
 					회원 탈퇴
 				</button><br/>
 			</div>
@@ -298,7 +299,6 @@
 	        contentType:"application/json;charset=UTF-8",
 			success:function(data){
 				var mychat=data['myChat'];
-				console.log(mychat);
 				mychat.forEach(function(i){
 					detail +='<tr><td>'+i.title+'</td>';
 					detail +='<td>'+i.product+'</td>';
@@ -324,7 +324,6 @@
 	        contentType:"application/json;charset=UTF-8",
 			success:function(data){
 				var mychat=data['myChat'];
-				console.log(mychat);
 				mychat.forEach(function(i){
 					detail +='<tr><td>'+i.title+'</td>';
 					detail +='<td>'+i.product+'</td>';
@@ -335,44 +334,15 @@
 	 		}
 		});
 	});
-	//공지사항 클릭이벤트
-	$("#web_NoticewriteBtn").click(function(){
-		$(".web_NoticeDetail").hide(500);
-		$(".web_Noticewirte").show(500);
-		
-	});
-	//공지사항 가져오기
-	$("#web_Notice").ready(function(){
-		
-		var cont="";
-		var num=0;
-		$.ajax({
-			url:"chnotice",
-			type:'get',
-			dataType:'json',
-			contentType:"application/json;charset=UTF-8",
-			success:function(data){
-				var noti = data['notice'];
-				console.log(noti);	
-				noti.forEach(function(i){
-					console.log(i.reg);
-					cont += '<tr><td>'+num+1+'</td>';
-					cont += '<td>'+i.title+'</td>';
-					cont += '<td>'+i.content+'</td>';
-					cont += '<td>'+i.reg+'</td></tr>';
-				})	
-				$("#web_Notice_body").html(cont);
-			}
-		});
-	});
 	
-		
-	function popup(){
-	    var url = "checkPs.1";
-	    var name = "popup test";
-	    var option = "width = 500, height = 500, top = 100, left = 200, location = no"
-	    window.open(url, name, option);
-	    
+	function delMember(){
+		var check=confirm("진짜룽 회원탈퇴 하꾸얌?ㅠ-ㅠ,,!!? 나 무져웡");
+		if(check){
+			window.location.href="delete";
+		}else{
+			alert("잘 생각했어!");
+			return false;
+		}
 	}
 	var chatInfo;
 	function address_setting(){
@@ -440,6 +410,68 @@
 
 	    return marker;
 	}
+	//공지사항 클릭이벤트
+	$("#web_NoticewriteBtn").click(function(){
+		$(".web_NoticeDetail").hide(500);
+		$(".web_Noticewirte").show(500);
+		
+	});
+	
+	//공지사항 가져오기
+	$("#web_FooterBtn5").click(function(){
+		getnotice();
+	});
+	$("#back_notice").click(function(){
+		$(".web_Noticewirte").hide();
+		$(".web_NoticeDetail").show();
+	});
+	
+	function getnotice(){
+		var cont="";
+		var num=1;
+		$.ajax({
+			url:"chnotice",
+			type:'get',
+			dataType:'json',
+			contentType:"application/json;charset=UTF-8",
+			success:function(data){
+				var noti = data['notice'];
+				console.log(noti);	
+				noti.forEach(function(i){
+					var reg=i.reg.split(" ")[0];
+					cont += '<tr><td>'+num+'</td>';
+					cont += '<td>'+i.title+'</td>';
+					cont += '<td>'+i.content+'</td>';
+					cont += '<td>'+reg+'</td></tr>';
+					num++;
+				})	
+				$("#web_Notice_body").html(cont);
+				$(".web_Notice").fadeIn(500);
+			}
+		});
+	}
+	
+	//공지사항 올리기
+	$("#upload_not").click(function(){
+		var cont="";
+		var num=1;
+		var a = $("#notice_title").val();
+		var b = $("#notice_content").val();
+		$.ajax({
+			url:"notice",
+			type:'get',
+			data:{title:a,content:b},
+			dataType:'text',
+			contentType:"application/text;charset=UTF-8",
+			success:function(data){
+				getnotice();
+				$(".web_Noticewirte").fadeOut();
+				$(".web_NoticeDetail").fadeIn(500);
+			}
+		});
+	});
+	
+	
 	//맵 마킹
 	function marking(){
 	 	$.ajax({
@@ -471,14 +503,16 @@
 			    		result +="<td>"+i.title+"</td>";
 			    		result +="<td>"+nowUsers+"/"+i.personnel+"</td>";
 			    		result +="<td>"+"<button onclick='roomDetail("+i.num+","+nowUsers+")' class='btn'>상세보기</button>"+"</td>";
-			    		if(nowUsers==i.personnel){
-			    			if(i.users.split(',').includes("${sessionNick}")){
+			    		if("${sessionId}"!=""){
+				    		if(nowUsers==i.personnel){
+				    			if(i.users.split(',').includes("${sessionNick}")){
+					    			result +="<td>"+"<button class='btn' onclick='chatGo("+i.num+")'>입장</button>"+"</td>";
+				    			}else{
+				    				result +="<td>"+"<button class='btn' onclick='fullChat()'>입장</button>"+"</td>";
+				    			}
+				    		}else{
 				    			result +="<td>"+"<button class='btn' onclick='chatGo("+i.num+")'>입장</button>"+"</td>";
-			    			}else{
-			    				result +="<td>"+"<button class='btn' onclick='fullChat()'>입장</button>"+"</td>";
-			    			}
-			    		}else{
-			    			result +="<td>"+"<button class='btn' onclick='chatGo("+i.num+")'>입장</button>"+"</td>";
+				    		}
 			    		}
 			    		result +="</tr>";
 
@@ -527,7 +561,9 @@ function roomDetail(num, nowUsers){
 		detail2 +='<div>'+room.content+'</div>';
 		detail2 +='<h5>검색 키워드 : &nbsp '+room.tag+'</h5>';
 		detail2 +="<button onclick='AllRoomDetailBack()' class='btn'>뒤로가기</button> &nbsp &nbsp ";
-		detail2 +="<button class='btn' onclick='chatGo("+num+")'>입장</button>"; 
+		if("${sessionId}"!=""){
+			detail2 +="<button class='btn' onclick='chatGo("+num+")'>입장</button>";
+		}
 		
 		$("#web_ARDTable").html(detail);
 		$("#roomContent").html(detail2);
@@ -616,16 +652,16 @@ function roomDetail(num, nowUsers){
 		},
 			addroom1=function(){
 			$("#bottom-set,#left-set").hide();
-            $("#popup1").fadeIn();
+            $("#popup1").fadeToggle(500);
         },
        		web_AddRoom=function(){
-            $(".web_Room").fadeIn();
+            $(".web_Room").fadeToggle(500);
         },
         	web_MapFilter=function(){
-            $(".web_MapFilter").fadeIn();
+            $(".web_MapFilter").fadeToggle(500);
         },
         	web_MyRoom=function(){
-            $(".web_MyRoom").fadeIn();
+            $(".web_MyRoom").fadeToggle(500);
         },
         	web_AllRoom=function(){
             $(".web_AllRoom").toggle(500);
@@ -637,11 +673,8 @@ function roomDetail(num, nowUsers){
             $(".web_AllRoom").toggle(500);
             $("#web_AllRoomBtn").toggle(500);  
         },
-        	web_Notice=function(){
-            $(".web_Notice").fadeIn(500); 
-        },
         	web_Member=function(){
-            $(".web_Member").fadeIn(500); 
+            $(".web_Member").fadeToggle(500); 
         },
         	exit1=function(){
             $("#popup1").fadeOut();
@@ -689,7 +722,6 @@ function roomDetail(num, nowUsers){
 		$("#web_AllRoomBackBtn").click(AllRoomDetailBack);
 		
 		//5.공지사항
-		$("#web_FooterBtn5").click(web_Notice);
 		$("#web_NoticeExitBtn").click(web_Exit);
 		
 		//6.회원 정보

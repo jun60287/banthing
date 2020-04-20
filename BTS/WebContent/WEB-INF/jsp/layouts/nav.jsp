@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>    
-<link rel="stylesheet" href="<c:url value="/resources/css/nav.css?val=d"/>">
+<link rel="stylesheet" href="<c:url value="/resources/css/nav.css?val=4"/>">
 <div class="container-fluid" style="padding-right:12px">
 	<div class="navbar-header" style="margin:0 auto; width:100%">
 	  <!-- 웹 -->
@@ -20,7 +20,7 @@
 						<li><h2><a href="#" id="web_FooterBtn4">모든 채팅방</a></h2></li>
 						<li><h2><a href="#" id="web_FooterBtn3">내 채팅방</a></h2></li>
 						<li><h2><a href="#" id="web_FooterBtn6">회원 정보</a></h2></li>
-						<li><h2><a href="logout">로그 아웃</a></h2></li>
+						<li><h2><a href="#" onclick="logout()">로그 아웃</a></h2></li>
 					</c:if>
 					<c:if test="${sessionId==null}">
 						<li><h2><a href="login.1">로그인</a></h2></li>
@@ -42,4 +42,14 @@
 		</div>
 	</div>
 </div>
-      
+ <script>
+ 	function logout(){
+ 		var check=confirm("진짜 로그아웃 할꾸얌? 나 무져웡ㅠ_ㅠ");
+ 		if(check){
+ 			window.location.href="logout";
+ 		}else{
+ 			alert("잘 생각했어!");
+ 			return false;
+ 		}
+ 	}
+ </script>   

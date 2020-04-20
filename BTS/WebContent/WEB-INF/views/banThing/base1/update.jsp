@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<link rel="stylesheet" href="<c:url value="/resources/css/base1/update.css"/>">
+<link rel="stylesheet" href="<c:url value="/resources/css/base1/update.css?var=2"/>">
 
 <div id="index">
 	<div class="name">
 		<h1 class="bts">반띵</h1>
-		<h1 class="bts">(로고)</h1>
+		<img width="150" height="150" src="<c:url value="/resources/img/logo.jpg"/>">
 	</div>
 	<div class="signup-setting">
 	
@@ -22,8 +22,11 @@
 				<input type="text" id="email" name="email" class="btn" value="${all.email}" placeholder="이메일"><br/>
 				<input type="text" id="nick" name="nick" class="btn" value="${all.nick}" placeholder="*닉네임"><br/>
 			<br/>
-			<button onclick="window.location.href='update.1'" class="btn btn-info">
-				회원가입
+			<button type="button" onclick="window.location.href='update.1'" class="btn btn-info">
+				회원 수정
+			</button>
+			<button type="button" onclick="history.go(-1);" class="btn btn-info">
+				뒤로가기
 			</button>
 		</form>
 	</div>

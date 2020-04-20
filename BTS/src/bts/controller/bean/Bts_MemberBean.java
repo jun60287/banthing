@@ -99,7 +99,7 @@ public class Bts_MemberBean {
 			session.setAttribute("sessionId", id);
 			session.setAttribute("sessionNick", nick);
 			model.addAttribute("check", check);
-			System.out.println("'"+id+"'"+"님이 로그인하셨습니다.");
+			System.out.println(id+"("+nick+")"+"님이 로그인하셨습니다.");
 			return "map-setting.1";
 		}else {
 		//3. 없으면 회원가입
@@ -125,7 +125,7 @@ public class Bts_MemberBean {
 				session.setAttribute("sessionId", vo.getId());
 				session.setAttribute("sessionNick", nick);
 				model.addAttribute("check", check);
-				System.out.println("'"+vo.getId()+"'"+"님이 로그인하셨습니다.");
+				System.out.println(vo.getId()+"("+nick+")"+"님이 로그인하셨습니다.");
 				return "map-setting.1";
 			}else {
 				model.addAttribute("check", "err");
@@ -156,12 +156,22 @@ public class Bts_MemberBean {
 		model.addAttribute("user", vo);
 		return "userProfile.1";
 	}
+	@RequestMapping("delete")
+	public void delete() throws Exception {
+		String id=(String)session.getAttribute("sessionId");
+		memberDAO.deleteMember(id);
+		response.sendRedirect("logout");
+	}
+	
 	@RequestMapping("logout")
 	public String logout() throws Exception {
 		String token=(String)session.getAttribute("kakaotoken");
+		String id=(String)session.getAttribute("sessionId");
+		String nick=(String)session.getAttribute("sessionNick");
 		if(token!=null) {
 			login.kakaoLogout(token);
 		}
+		System.out.println(id+"("+nick+")"+"님께서 로그아웃 하셨습니다.");
 		session.invalidate();
 		model.addAttribute("logout","success");
 		return "login.1";

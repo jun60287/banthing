@@ -44,7 +44,7 @@ import bts.model.vo.Bts_ChatVO;
 @RequestMapping("/banThing/")
 public class PlatFormSkill {
 	Logins login=new Logins();
-	Alram alram=new Alram();
+	DealMethd alram=new DealMethd();
 	
 	HttpServletRequest request=null;
 	HttpServletResponse response=null;
@@ -64,22 +64,12 @@ public class PlatFormSkill {
 	//카카오 로그인
 	@RequestMapping("kakaologin")
 	public String kakaologin(String code) throws URISyntaxException, MalformedURLException{
-		
+		System.out.println("카카오 로그인 발동!");
 		String token= login.kakaoToken(code);
 		session.setAttribute("kakaotoken", token);
 		Map userInfo=login.kakaoInfo(token);
 		request.setAttribute("userInfo", userInfo);
 		return "/banThing/logins";
 	}
-	
-	//카카오 알림 
-	@RequestMapping("kakaoAlram")
-	public String kakaoAlram() throws URISyntaxException, MalformedURLException{
-		
-		String token=(String)session.getAttribute("kakaotoken");
-		alram.sendMes(token, request);
-		return "index.2";
-	}
-
 
 }

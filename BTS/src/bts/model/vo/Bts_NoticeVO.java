@@ -9,7 +9,6 @@ public class Bts_NoticeVO {
 	String title;
 	String content;
 	String reg;
-	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 	public String getTitle() {
 		return title;
 	}
@@ -26,8 +25,7 @@ public class Bts_NoticeVO {
 		return reg;
 	}
 	public void setReg(String reg) {
-		System.out.println(reg);
-		this.reg = reg;
+			this.reg = reg;
 	}
 	
 }

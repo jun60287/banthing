@@ -63,7 +63,6 @@ public class Bts_ChatDAO {
 	public List<Bts_ChatVO> getChatInfo(String options, String tag) {
 		List<Bts_ChatVO> chatList = null;
 		if (options.equals("전체")) { //카테고리가 '전체'일 때 : 키워드로만 검색
-			System.out.println(tag);
 			chatList = sqlSession.selectList("chat.getChatList_1", tag);
 		}else { //카테고리가 '전체'가 아닐 때 : 카테고리 및 키워드 검색
 			Map param = new HashMap();
@@ -85,7 +84,6 @@ public class Bts_ChatDAO {
 		Map map = new HashMap();
 		map.put("nick", nick);
 		map.put("id", id);
-		System.out.println(map);
 		chatList = sqlSession.selectList("chat.inchat", map);
 		return chatList;
 	}
