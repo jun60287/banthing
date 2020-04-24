@@ -28,6 +28,10 @@
 		text-decoration:none;
 		color:red;
 	}
+	a:active{
+		text-decoration:none;
+		color:red;
+	}
 	
 	.top-box{
 		display: none;

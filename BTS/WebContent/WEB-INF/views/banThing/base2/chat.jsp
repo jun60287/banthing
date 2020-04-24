@@ -22,20 +22,24 @@
 			<button class="chat-button bg-light round-input" onclick="chat_submit()">전송</button>
 		</div>
 		
+		<!-- 결제 상태  -->
 		<div class="chatfunction">
-			<!-- 결제 상태  -->
-			
 		</div>
 		
 		<!-- 방정보보기 및 방정보 수정 -->
-		<div id="roomBtn"></div>
+		<div id="roomBtn">
+			<button class='dealBtn' onclick='roomInfo()'>방 정보 보기</button> <br/>
+		</div>
+		
+		<!-- 거래 버튼 -->
 		<div id="dealBtn"></div>
 		<button type="button" class="exit-button" onclick="chat_exit()">나가기</button>
 			
-		<!-- 콘솔창 -->	
+		<!-- 거래 콘솔창 -->	
 		<div class="chatDealStart">
 		미 진행 중...
 		</div>
+		
 		<!-- 방 유저정보 -->
 		<div id="userInfo">		    
 	    </div>
@@ -69,11 +73,12 @@
 		$("#roomInfo").fadeOut(500);
 		open("updateChat.1?num=${vo.num}", "거래시작" , "toolbar=no,location=no,status=no, menubar=no, scrollbars=no, resizalbe=no, width=600px, height=750px,left=400px,top=200px");
 	}
-	//채팅방 수정 닫기버튼
+	//채팅방 수정-> 닫기버튼
 	$("#web_ExitBtn1").click(function(){
 		$("#roomInfo").fadeOut(500);
 	});
-	//현재방 vo 가져와서 테이블에 뿌려주기
+	
+	//현재 Bts_chat 가져오기
 	function roomInfo(){
 		$.ajax({
 			url:"roomInfo",
@@ -96,11 +101,36 @@
 		$("#roomInfo").fadeToggle(500);
 	}
 
-	//거래 시작시 방 정보가 변경될 수 있으므로.
+    //채팅유저 정보 가져오기
+	function userInfo(){
+   		$.ajax({
+   			url:"roomInfo",
+   			data:{num:"${vo.num}"},
+   			dataType:"json",
+   			contentType:"application/json;charset=UTF-8",
+   			success:function(data){
+   				var vo=data['vo'];
+   				var chatInfo=vo.users.split(",");
+   		    	var userProfiles="<p style='margin-bottom:5px'><strong>참여자</strong></p>";
+   		    	for(i = 0; i < chatInfo.length-1; i++){
+   		    			var id="'"+chatInfo[i]+"'";
+   		    			if(chatInfo[i] == "${sessionNick}"){
+   		    				userProfiles +='<i class="fas fa-user"></i> '+chatInfo[i]+'(방장)(me)</br>';					
+   		    			}else{
+   		    				userProfiles +='<i class="fas fa-user"></i> '+chatInfo[i]+'&nbsp <button style=" border-radius: 5px; border-style:hidden;" onclick="userProfile('+id+')">정보보기</button></br>';
+   		    			}
+   		    	}
+   		    	$("#userInfo").html(userProfiles);
+   			}
+   		})
+	}
+	
+	//거래 시작시 Bts_deal 테이블 변경 및 거래시작 거래 전->동의 중으로 변경 됨
 	function dealStart(){
-		var dealStart=open("dealStart.1?num=${vo.num}", "거래시작" , "toolbar=no,location=no,status=no, menubar=no, scrollbars=no, resizalbe=no, width=600px, height=750px,left=400px,top=200px");
+		var dealStart=open("dealStart.1?num=${vo.num}", "거래시작" , "toolbar=no,location=no,status=no, menubar=no, scrollbars=no, resizalbe=no, width=527px, height=527px,left=400px,top=200px");
 		//거래시작시 중단버튼과 완료버튼 나옴
 	}
+	
 	//거래 도중 결제 상태 변경 (거래 전,동의 중,동의 완료,결제 중,결제 완료) 
 	function setDealState(mes,a){
 		$.ajax({
@@ -113,7 +143,7 @@
 	 		}
 		});
 	}
-	
+	//채팅방 나가기 (방장이면 방폭파)
 	function chat_exit(){
 		if("${vo.nick}"=="${sessionNick}"){
 			var check=confirm("너가 나가면 방폭파되는게 괜찮 방구?");
@@ -127,7 +157,13 @@
 		}
 	}
 	
+	//채팅 글 전송
 	function chat_submit(){
+		if($("#message").val()==""){
+			alert("메세지를 입력해주세요");
+		     $('#message').val("");
+			return false;
+		}
 		$.ajax({
 			url:"chatSave",
 	        type: 'get',
@@ -142,60 +178,29 @@
 		$("#chatLog").scrollTop($("#chatLog")[0].scrollHeight);
 	}
 	
+	//엔터 버튼 실행시 전송가능하도록
+	function Enter_Check(){
+	    if(event.keyCode == 13){
+	      chat_submit();
+	      $('#message').val("");
+	    }
+	}
+	
+	//페이지 실행시 채팅 정보는 0.5초 / 거래상태는 1초마다 빼오기
 	$(document).ready(function(){
-		setInterval(chat_Info, 500);
+		setInterval(chat_Info, 300);
 		setInterval(dealState, 1000);
+		setInterval(userInfo, 300);
 		$("#chatLog").scrollTop($("#chatLog")[0].scrollHeight);
 	})
 	
-	function Enter_Check(){
-    if(event.keyCode == 13){
-      chat_submit();
-      $('#message').val("");
-    }
-	}
-	function address_setting(){
-	    new daum.Postcode({
-	        oncomplete: function(data) {
-	            $("#place").val(data["address"]);
-	            console.log(data);
-				var geocoder = new kakao.maps.services.Geocoder();
-	        	geocoder.addressSearch(data.address,function(result, status){
-	        		 if (status === kakao.maps.services.Status.OK) {
-	        		        $("#placeInfo").val(result[0].x+"-"+result[0].y);
-	        		        console.log(result[0].x+"-"+result[0].y);
-	        		 }
-	        	});
-	        }
-	    }).open();
-	}
-	
-	var chatInfo="${vo.users}".split(",");
-	var userProfiles="<p style='margin-bottom:5px'><strong>참여자</strong></p>";
-	var roomDetail="";
-	
-	// 방장일 경우
-		
-	roomDetail += "<button class='dealBtn' onclick='roomInfo()''=>방 정보 보기</button> <br/>";
-	for(i = 0; i < chatInfo.length-1; i++){
-			var id="'"+chatInfo[i]+"'";
-			if(chatInfo[i] == "${sessionNick}"){
-				userProfiles +='<i class="fas fa-user"></i> '+chatInfo[i]+'(방장)(me)</br>';					
-			}else{
-				userProfiles +='<i class="fas fa-user"></i> '+chatInfo[i]+'&nbsp <button style=" border-radius: 5px; border-style:hidden;" onclick="userProfile('+id+')">정보보기</button></br>';
-			}
-	}
-	// 방장이 아닐 경우
-	
-	$("#userInfo").html(userProfiles);
-	$("#roomBtn").html(roomDetail);
-	
+
 	// 유저정보보기
 	function userProfile(nick){
 		console.log(nick);
 	    var url = "userProfile.1?nick="+nick;
 	    var name = "userProfile";
-	    var option = "width = 500, height = 500, top = 100, left = 200, location = no";
+	    var option = "width = 500, height = 400, top = 100, left = 200, location = no";
 	    window.open(url, name, option);
 	}
 	
@@ -223,7 +228,7 @@
 	 		}
 		});
 	}
-	
+	//거래 정보 가져오기
 	function dealState(){
 		$.ajax({
 			url:"dealinfo",

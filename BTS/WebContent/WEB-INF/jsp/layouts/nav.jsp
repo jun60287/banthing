@@ -8,7 +8,7 @@
 		<div class="top-box2">
 			<div class="name-set">
 				<h1><strong><a href="index.2">반띵</a></strong></h1>
-				<img width="170" height="170" src="<c:url value="/resources/img/logo.jpg"/>">
+				<a href="index.2"><img width="170" height="170" src="<c:url value="/resources/img/logo.png"/>"></a>
 				<hr>
 			</div>
 			<div class="catergory-set">

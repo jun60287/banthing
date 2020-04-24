@@ -1,12 +1,9 @@
 package bts.model.dao;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.mybatis.spring.SqlSessionTemplate;
-
 import bts.model.vo.Bts_ChatVO;
 
 public class Bts_ChatDAO {

@@ -10,7 +10,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -131,14 +130,14 @@ public class Logins {
 		 }
 	 }
 		
-		//카카오 연결끊기
-	public String unlink(String token) throws URISyntaxException, IOException{
+	//카카오 연결끊기
+	public void unlink(String token) throws URISyntaxException, IOException{
 		String reqURL = "https://kapi.kakao.com/v1/user/unlink";
 	       	URL url = new URL(reqURL);
 	        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 	        conn.setRequestMethod("POST");
 	        conn.setDoInput(true);
-	        
+	        System.out.println(token);
 	        conn.setRequestProperty("Content-Type", "application/json");
 	        conn.setRequestProperty("Accept-Charset", "UTF-8");
 	        conn.setRequestProperty("Authorization", "Bearer " +token);
@@ -147,7 +146,6 @@ public class Logins {
 	        System.out.println("카톡 연결해제 상태코드:"+responseCode);
 	        
 	        conn.disconnect();
-		return "index.2";
 	}
 	 
 }

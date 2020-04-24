@@ -14,26 +14,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.eclipse.jdt.internal.compiler.ast.JavadocSingleNameReference;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import bts.basic.function.ChatMethod;
 import bts.model.dao.Bts_ChatDAO;
 import bts.model.dao.Bts_DealDAO;
@@ -49,6 +40,8 @@ public class Bts_ChatBean {
 	private Bts_ChatDAO chatDAO;
 	@Autowired
 	private Bts_DealDAO dealDAO;
+	@Autowired
+	ChatMethod cm=null;
 	
 	public HttpServletRequest request=null;
 	public Model model = null;
@@ -57,7 +50,6 @@ public class Bts_ChatBean {
 	String nick=null;
 	String id=null;
 	String path=null;
-	ChatMethod cm=new ChatMethod();
 	
 	@ModelAttribute
 	public void reqres(HttpServletRequest request, Model model,HttpSession session) {
@@ -302,6 +294,8 @@ public class Bts_ChatBean {
 		
 		return map;
 	}
+	
+	//맵->JSON 형식으로 파싱하여 데이터 전달
 	@RequestMapping(value = "roomInfo", headers="Accept=*/*",  produces="application/json")
 	@ResponseBody
 	public Map roomInfo(int num){

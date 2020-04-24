@@ -5,8 +5,7 @@
 
 <div id="index">
 	<div class="name">
-		<h1 class="bts">반띵</h1>
-		<img width="200" height="200" src="<c:url value="/resources/img/logo.jpg"/>">
+		<img width="480" height="160" src="<c:url value="/resources/img/logo.jpg"/>"></h1>
 	</div>
 	<div class="login">
 		<form id="login" action="login.1" method="post">

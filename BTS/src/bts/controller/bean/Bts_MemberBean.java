@@ -1,36 +1,14 @@
 package bts.controller.bean;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.Map;
-import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import bts.basic.function.Logins;
 import bts.model.dao.Bts_MemberDAO;
 import bts.model.vo.Bts_MemberVO;
@@ -159,6 +137,8 @@ public class Bts_MemberBean {
 	@RequestMapping("delete")
 	public void delete() throws Exception {
 		String id=(String)session.getAttribute("sessionId");
+		String token=(String)session.getAttribute("kakaotoken");
+		login.unlink(token);
 		memberDAO.deleteMember(id);
 		response.sendRedirect("logout");
 	}

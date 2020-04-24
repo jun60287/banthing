@@ -5,11 +5,9 @@
 
 <div id="index">
 	<div class="name">
-		<h1 class="bts">반띵</h1>
-		<img width="150" height="150" src="<c:url value="/resources/img/logo.jpg"/>">
+		<img width="480" height="160" src="<c:url value="/resources/img/logo.jpg"/>"></h1>
 	</div>
 	<div class="signup-setting">
-	
 		<form name="signUpForm" action="update.1"  method="post">
 				<input type="text" id="id" name="id" class="btn" value="${all.id}" readonly><br/>
 				<input type="password" id="pw" name="pw" class="btn" placeholder="*패스워드"><br/>
